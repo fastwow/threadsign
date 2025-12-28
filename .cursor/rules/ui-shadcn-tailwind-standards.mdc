@@ -1,0 +1,17 @@
+---
+alwaysApply: true
+---
+Rule: UI Standards (shadcn/ui + Tailwind)
+
+- Use shadcn/ui components first; do not reinvent base UI primitives (Button, Input, Dialog, Dropdown, Tabs, etc).
+- Use Tailwind utility classes for styling; avoid custom CSS unless necessary.
+- Prefer className composition via `cn()` utility (if repo has it) instead of complex conditional logic inline.
+- Keep components small and composable:
+  - Container components handle data fetching + mutations.
+  - Presentational components accept typed props and render UI only.
+- Ensure all UI states exist:
+  - loading, empty, error, success, disabled
+- Forms must have:
+  - validation errors shown near fields
+  - disabled submit while pending
+  - optimistic UI only if explicitly safe
