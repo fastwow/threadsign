@@ -9,8 +9,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: "ThreadSign - Product ideas from real discussion threads",
+  description: "Find validated problems worth solving. ThreadSign monitors Reddit discussions to extract pain signals and generates concise product ideas with viability scores.",
 };
 
 const geistSans = Geist({
