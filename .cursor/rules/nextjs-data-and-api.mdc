@@ -1,0 +1,7 @@
+---
+alwaysApply: true
+---
+Prefer server-side data fetching for initial page loads.
+API routes must validate input, return proper status codes,
+and handle errors explicitly.
+Only NEXT_PUBLIC_* environment variables are allowed in client code.

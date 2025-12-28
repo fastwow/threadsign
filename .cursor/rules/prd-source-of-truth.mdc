@@ -1,0 +1,6 @@
+---
+alwaysApply: true
+---
+The PRD in this repository is the source of truth.
+Do not add features or behavior not explicitly described in the PRD.
+If a requirement is unclear, ask or implement the minimal safe default and add a TODO.

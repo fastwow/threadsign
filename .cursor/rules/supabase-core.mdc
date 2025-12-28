@@ -1,0 +1,6 @@
+---
+alwaysApply: true
+---
+Supabase uses Postgres as the source of truth.
+Use auth.users as the user source of truth.
+Define or update database schema before writing queries.

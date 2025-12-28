@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+Implement the simplest solution that satisfies the PRD.
+Avoid abstractions, optimizations, or scalability work unless explicitly required.

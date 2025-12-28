@@ -1,0 +1,6 @@
+---
+alwaysApply: true
+---
+Use Server Components by default.
+Add "use client" only when required for interactivity or browser APIs.
+Sensitive logic and secrets must stay server-side.

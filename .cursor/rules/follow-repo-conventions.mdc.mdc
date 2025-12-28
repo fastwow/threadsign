@@ -1,0 +1,6 @@
+---
+alwaysApply: true
+---
+Follow the existing repository conventions for file structure, naming, formatting, and error handling.
+Do not introduce new patterns or libraries unless explicitly requested.
+Do not refactor unrelated code.

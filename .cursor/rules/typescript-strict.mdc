@@ -1,0 +1,6 @@
+---
+alwaysApply: true
+---
+Avoid using any.
+Prefer explicit types and interfaces.
+Avoid unsafe casting with 'as' unless unavoidable and documented.

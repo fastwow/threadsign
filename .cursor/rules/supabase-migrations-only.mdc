@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+All schema changes must be done via SQL migrations committed to the repo.
+Do not rely on manual dashboard-only changes.

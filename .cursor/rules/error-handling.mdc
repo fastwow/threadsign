@@ -1,0 +1,6 @@
+---
+alwaysApply: true
+---
+Validate inputs early.
+Fail fast with explicit errors.
+Do not swallow errors or fail silently.

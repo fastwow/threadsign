@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+Any logic that bypasses RLS or accesses sensitive data must run server-side
+or in database functions, not in client code.

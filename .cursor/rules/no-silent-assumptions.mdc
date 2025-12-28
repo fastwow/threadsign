@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+Do not invent business logic, permissions, validations, or edge cases.
+Make assumptions explicit or add TODOs instead of guessing.

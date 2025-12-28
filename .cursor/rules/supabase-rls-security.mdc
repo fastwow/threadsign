@@ -1,0 +1,6 @@
+---
+alwaysApply: true
+---
+All tables must have Row Level Security enabled.
+Policies must be explicit and minimal.
+Never use the service role key in client code.

@@ -1,0 +1,6 @@
+---
+alwaysApply: true
+---
+Prefer small, reviewable changes.
+Do not refactor unrelated code.
+Avoid large multi-file edits unless explicitly requested.
