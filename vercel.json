@@ -1,16 +1,8 @@
 {
   "crons": [
     {
-      "path": "/api/cron/generate-reddit-posts",
-      "schedule": "*/5 * * * *"
-    },
-    {
-      "path": "/api/cron/generate-ideas",
-      "schedule": "*/12 * * * *"
-    },
-    {
-      "path": "/api/cron/send-email-digests",
-      "schedule": "*/20 * * * *"
+      "path": "/api/cron/daily-pipeline",
+      "schedule": "0 6 * * *"
     }
   ]
 }
