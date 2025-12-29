@@ -252,15 +252,27 @@ export function IdeaFeed() {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    const diffInMilliseconds = now.getTime() - date.getTime();
+    const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
+    const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
 
+    // Show minutes for items less than 1 hour old
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes} min ago`;
+    }
+
+    // Show hours for items less than 24 hours old
     if (diffInHours < 24) {
       return `${diffInHours}h ago`;
     }
+
+    // Show days for items less than 7 days old
     const diffInDays = Math.floor(diffInHours / 24);
     if (diffInDays < 7) {
       return `${diffInDays}d ago`;
     }
+
+    // Show full date for older items
     return date.toLocaleDateString();
   };
 
