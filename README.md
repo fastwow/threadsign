@@ -19,12 +19,13 @@ Please refer to it for all product and implementation details.
 
 2. **Install dependencies**
    ```bash
-   npm install
+   yarn install
    ```
 
 3. **Set up environment variables**
-   - Copy `.env.local.example` to `.env.local` (if it exists) or create a new `.env.local` file
-   - Add all required environment variables (see [Environment Variables](#environment-variables) below)
+   - Copy `.env.local.example` to `.env.local`  
+     `.env.local.example` is provided in the repository as a template that shows all required environment variables and example placeholders.
+   - Fill in the actual values for each variable as described below and in the provided example file.
 
 4. **Set up Supabase**
    - Run all SQL migrations in `supabase/migrations/` in order
@@ -42,6 +43,7 @@ Please refer to it for all product and implementation details.
 
 1. **Set up environment variables** in your deployment platform (Vercel, etc.)
    - Add all required environment variables from the [Environment Variables](#environment-variables) section
+   - You can reference the `.env.local.example` file for the correct variable names and structure
 
 2. **Deploy the application**
    - Follow your platform's deployment instructions
@@ -54,7 +56,8 @@ Please refer to it for all product and implementation details.
 
 ## Environment Variables
 
-The following environment variables are required for the application to function:
+The following environment variables are required for the application to function.  
+See `.env.local.example` in the repository for an example file you can copy and update.
 
 ### Client-Side Variables
 
@@ -72,9 +75,16 @@ These variables are **never exposed to the client** and must remain server-side 
 - **`OPENAI_API_KEY`** - OpenAI API key for generating mock Reddit posts and evaluating/scoring product ideas
 - **`CRON_SECRET`** - Secret token for securing cron job endpoints (prevents unauthorized access to background job routes)
 
-### Example `.env.local` File
+### Example Environment Variable File
 
-Create a `.env.local` file in the root directory with the following structure:
+A `.env.local.example` file is included in the root of the repository and provides all required variables with example values.  
+To get started, copy this file to `.env.local` and update each value as needed:
+
+```
+cp .env.local.example .env.local
+```
+
+Example contents:
 
 ```env
 # Supabase Configuration
@@ -93,7 +103,7 @@ CRON_SECRET=your-random-secret-token-here
 ```
 
 **Important Security Notes:**
-- Never commit `.env.local` to version control
+- Never commit `.env.local` or `.env.local.example` with real secrets to version control
 - The `SUPABASE_SERVICE_ROLE_KEY` has full database access and should be kept secret
 - The `CRON_SECRET` should be a strong, random string
 - Server-only variables (without `NEXT_PUBLIC_` prefix) are safe and should never be exposed to client-side code
