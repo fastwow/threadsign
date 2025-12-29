@@ -6,8 +6,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ExternalLink, Sparkles } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
+import { ExternalLink, Sparkles, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import Link from "next/link";
+
+interface ScoringBreakdown {
+  pain_point_intensity?: number;
+  willingness_to_pay?: number;
+  competitive_landscape?: number;
+  tam?: number;
+}
 
 interface Idea {
   id: string;
@@ -21,6 +36,13 @@ interface Idea {
     key: string;
     label: string;
   };
+  llm_raw?: {
+    scoring_breakdown?: ScoringBreakdown;
+    pain_point_intensity?: number;
+    willingness_to_pay?: number;
+    competitive_landscape?: number;
+    tam?: number;
+  };
   idea_sources: Array<{
     reddit_post: {
       id: string;
@@ -32,10 +54,13 @@ interface Idea {
   }>;
 }
 
+type SortOption = "date-desc" | "date-asc" | "score-desc" | "score-asc";
+
 export function IdeaFeed() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [topics, setTopics] = useState<Array<{ id: string; key: string; label: string }>>([]);
   const [selectedTopic, setSelectedTopic] = useState<string>("all");
+  const [sortOption, setSortOption] = useState<SortOption>("date-desc");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -66,6 +91,14 @@ export function IdeaFeed() {
 
     loadData();
   }, []);
+
+  useEffect(() => {
+    // Reload ideas when sort option changes
+    if (topics.length > 0) {
+      loadIdeas(selectedTopic);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortOption]);
 
   async function loadIdeas(topicKey: string) {
     const supabase = createClient();
@@ -103,6 +136,7 @@ export function IdeaFeed() {
           score,
           created_at,
           topic_id,
+          llm_raw,
           topics!topic_id(id, key, label),
           idea_sources(
             reddit_posts(
@@ -112,8 +146,23 @@ export function IdeaFeed() {
             )
           )
         `
-        )
-        .order("created_at", { ascending: false });
+        );
+
+      // Apply sorting
+      switch (sortOption) {
+        case "date-desc":
+          query = query.order("created_at", { ascending: false });
+          break;
+        case "date-asc":
+          query = query.order("created_at", { ascending: true });
+          break;
+        case "score-desc":
+          query = query.order("score", { ascending: false });
+          break;
+        case "score-asc":
+          query = query.order("score", { ascending: true });
+          break;
+      }
 
       if (topicId) {
         query = query.eq("topic_id", topicId);
@@ -141,6 +190,7 @@ export function IdeaFeed() {
             pain_insight: item.pain_insight,
             score: item.score,
             created_at: item.created_at,
+            llm_raw: item.llm_raw,
             topic: topic,
             idea_sources: (item.idea_sources || []).map((is: any) => ({
               reddit_post: {
@@ -151,7 +201,7 @@ export function IdeaFeed() {
                 },
               },
             })),
-          };
+          } as Idea;
         })
         .filter((item): item is Idea => item !== null);
       
@@ -167,6 +217,36 @@ export function IdeaFeed() {
   const handleTopicChange = (topicKey: string) => {
     setSelectedTopic(topicKey);
     loadIdeas(topicKey);
+  };
+
+  const handleSortChange = (option: SortOption) => {
+    setSortOption(option);
+  };
+
+  const getSortLabel = (option: SortOption) => {
+    switch (option) {
+      case "date-desc":
+        return "Newest First";
+      case "date-asc":
+        return "Oldest First";
+      case "score-desc":
+        return "Highest Score";
+      case "score-asc":
+        return "Lowest Score";
+    }
+  };
+
+  const getScoringBreakdown = (idea: Idea): ScoringBreakdown | null => {
+    if (!idea.llm_raw) return null;
+    
+    // Check for both old format (scoring_breakdown) and new format (flat)
+    const breakdown = idea.llm_raw.scoring_breakdown || {};
+    return {
+      pain_point_intensity: idea.llm_raw.pain_point_intensity ?? breakdown.pain_point_intensity,
+      willingness_to_pay: idea.llm_raw.willingness_to_pay ?? breakdown.willingness_to_pay,
+      competitive_landscape: idea.llm_raw.competitive_landscape ?? breakdown.competitive_landscape,
+      tam: idea.llm_raw.tam ?? breakdown.tam,
+    };
   };
 
   const formatDate = (dateString: string) => {
@@ -217,17 +297,49 @@ export function IdeaFeed() {
 
   return (
     <div className="space-y-6">
-      {/* Topic Filter */}
-      <Tabs value={selectedTopic} onValueChange={handleTopicChange}>
-        <TabsList>
-          <TabsTrigger value="all">All Topics</TabsTrigger>
-          {topics.map((topic) => (
-            <TabsTrigger key={topic.id} value={topic.key}>
-              {topic.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+      {/* Topic Filter and Sort Controls */}
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <Tabs value={selectedTopic} onValueChange={handleTopicChange}>
+          <TabsList>
+            <TabsTrigger value="all">All Topics</TabsTrigger>
+            {topics.map((topic) => (
+              <TabsTrigger key={topic.id} value={topic.key}>
+                {topic.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm">
+              <ArrowUpDown className="h-4 w-4 mr-2" />
+              Sort: {getSortLabel(sortOption)}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Sort by Date</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => handleSortChange("date-desc")}>
+              <ArrowDown className="h-4 w-4 mr-2" />
+              Newest First
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleSortChange("date-asc")}>
+              <ArrowUp className="h-4 w-4 mr-2" />
+              Oldest First
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Sort by Score</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => handleSortChange("score-desc")}>
+              <ArrowDown className="h-4 w-4 mr-2" />
+              Highest Score
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleSortChange("score-asc")}>
+              <ArrowUp className="h-4 w-4 mr-2" />
+              Lowest Score
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
       {/* Ideas List */}
       {ideas.length === 0 ? (
@@ -266,11 +378,61 @@ export function IdeaFeed() {
                       <CardDescription className="text-base">{idea.pitch}</CardDescription>
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                      <div className="flex items-center gap-2">
-                        <Sparkles className={`h-4 w-4 ${getScoreColor(idea.score)}`} />
-                        <span className={`font-semibold ${getScoreColor(idea.score)}`}>
-                          {idea.score}
-                        </span>
+                      <div className="relative group">
+                        <div className="flex items-center gap-2 cursor-help">
+                          <Sparkles className={`h-4 w-4 ${getScoreColor(idea.score)}`} />
+                          <span className={`font-semibold ${getScoreColor(idea.score)}`}>
+                            {idea.score}
+                          </span>
+                        </div>
+                        {/* Score Breakdown Tooltip */}
+                        {(() => {
+                          const breakdown = getScoringBreakdown(idea);
+                          if (!breakdown) return null;
+                          
+                          return (
+                            <div className="absolute right-0 top-full mt-2 z-50 hidden group-hover:block">
+                              <Card className="w-64 shadow-lg border-border">
+                                <CardHeader className="pb-3">
+                                  <CardTitle className="text-sm">Score Breakdown</CardTitle>
+                                  <CardDescription className="text-xs">
+                                    Average of 4 criteria
+                                  </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-2 text-sm">
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-muted-foreground">Pain Point Intensity</span>
+                                    <span className="font-medium">
+                                      {breakdown.pain_point_intensity ?? "—"}
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-muted-foreground">Willingness to Pay</span>
+                                    <span className="font-medium">
+                                      {breakdown.willingness_to_pay ?? "—"}
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-muted-foreground">Competitive Landscape</span>
+                                    <span className="font-medium">
+                                      {breakdown.competitive_landscape ?? "—"}
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-muted-foreground">TAM</span>
+                                    <span className="font-medium">
+                                      {breakdown.tam ?? "—"}
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between items-center pt-2 border-t border-border font-semibold">
+                                    <span>Average Score</span>
+                                    <span>{idea.score}</span>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            </div>
+                          );
+                        })()}
                       </div>
                       <span className="text-xs text-muted-foreground">
                         {formatDate(idea.created_at)}
