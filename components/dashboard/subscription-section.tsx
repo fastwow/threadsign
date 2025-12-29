@@ -162,28 +162,8 @@ export function SubscriptionSection({ userId }: { userId: string }) {
       });
 
       // Reload subscription data
-      const { data: subData, error: reloadError } = await supabase
-        .from("email_subscriptions")
-        .select(
-          `
-          id,
-          is_active,
-          email_subscription_topics(
-            topic:topics(id, key, label)
-          )
-        `
-        )
-        .eq("id", subscriptionId)
-        .single();
-
-      if (!reloadError && subData) {
-        setSubscription({
-          id: subData.id,
-          is_active: subData.is_active,
-          topics: (subData.email_subscription_topics as any[]).map(
-            (est: any) => est.topic
-          ),
-        });
+      if (subscriptionId) {
+        await reloadSubscription(subscriptionId);
       }
     } catch (err) {
       setMessage({
@@ -192,6 +172,85 @@ export function SubscriptionSection({ userId }: { userId: string }) {
       });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleUnsubscribe = async () => {
+    if (!subscription?.id) return;
+
+    const supabase = createClient();
+    setSaving(true);
+    setMessage(null);
+
+    try {
+      // Deactivate subscription
+      const { error: updateError } = await supabase
+        .from("email_subscriptions")
+        .update({
+          is_active: false,
+        })
+        .eq("id", subscription.id);
+
+      if (updateError) throw updateError;
+
+      // Remove all topic associations
+      const { error: deleteError } = await supabase
+        .from("email_subscription_topics")
+        .delete()
+        .eq("subscription_id", subscription.id);
+
+      if (deleteError) throw deleteError;
+
+      // Clear selected topics
+      setSelectedTopics(new Set());
+
+      setMessage({
+        type: "success",
+        text: "Successfully unsubscribed from email notifications",
+      });
+
+      // Reload subscription data
+      await reloadSubscription(subscription.id);
+    } catch (err) {
+      setMessage({
+        type: "error",
+        text: err instanceof Error ? err.message : "Failed to unsubscribe",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const reloadSubscription = async (subscriptionId: string) => {
+    const supabase = createClient();
+    const { data: subData, error: reloadError } = await supabase
+      .from("email_subscriptions")
+      .select(
+        `
+        id,
+        is_active,
+        email_subscription_topics(
+          topic:topics(id, key, label)
+        )
+      `
+      )
+      .eq("id", subscriptionId)
+      .single();
+
+    if (!reloadError && subData) {
+      setSubscription({
+        id: subData.id,
+        is_active: subData.is_active,
+        topics: (subData.email_subscription_topics as any[]).map(
+          (est: any) => est.topic
+        ),
+      });
+      // Update selected topics to match subscription
+      setSelectedTopics(
+        new Set(
+          (subData.email_subscription_topics as any[]).map((est: any) => est.topic.id)
+        )
+      );
     }
   };
 
@@ -246,9 +305,21 @@ export function SubscriptionSection({ userId }: { userId: string }) {
           </div>
         )}
 
-        <Button onClick={handleSave} disabled={saving} className="w-full sm:w-auto">
-          {saving ? "Saving..." : "Save Subscription"}
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button onClick={handleSave} disabled={saving} className="w-full sm:w-auto">
+            {saving ? "Saving..." : subscription?.is_active ? "Update Subscription" : "Save Subscription"}
+          </Button>
+          {subscription?.is_active && (
+            <Button
+              onClick={handleUnsubscribe}
+              disabled={saving}
+              variant="outline"
+              className="w-full sm:w-auto"
+            >
+              Unsubscribe
+            </Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
