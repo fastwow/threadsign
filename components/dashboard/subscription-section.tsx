@@ -6,8 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Mail, CheckCircle2 } from "lucide-react";
+import { Mail, CheckCircle2, ChevronDown } from "lucide-react";
 import { updateSubscription, unsubscribe as unsubscribeAction } from "@/app/actions/subscriptions";
+import { cn } from "@/lib/utils";
 
 interface Topic {
   id: string;
@@ -27,6 +28,7 @@ export function SubscriptionSection({ userId }: { userId: string }) {
   const [selectedTopics, setSelectedTopics] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false); // Default to collapsed
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(
     null
   );
@@ -60,14 +62,15 @@ export function SubscriptionSection({ userId }: { userId: string }) {
             (est: any) => est.topic
           ),
         });
-        setSelectedTopics(
-          new Set(
-            (subData.email_subscription_topics as any[]).map((est: any) => est.topic.id)
-          )
-        );
+        const topicIds = (subData.email_subscription_topics as any[]).map((est: any) => est.topic.id);
+        setSelectedTopics(new Set(topicIds));
+        // Set default expansion state: expanded if no topics, collapsed if has topics
+        setIsExpanded(topicIds.length === 0);
       } else {
         setSubscription(null);
         setSelectedTopics(new Set());
+        // Expanded if no subscription/topics
+        setIsExpanded(true);
       }
     } catch (err) {
       console.error("Failed to load subscription:", err);
@@ -201,16 +204,30 @@ export function SubscriptionSection({ userId }: { userId: string }) {
 
   return (
     <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Mail className="h-5 w-5" />
-          <CardTitle>Email Subscriptions</CardTitle>
+      <CardHeader
+        className="cursor-pointer"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Mail className="h-5 w-5" />
+            <div>
+              <CardTitle>Email Subscriptions</CardTitle>
+              <CardDescription className="mt-1">
+                Subscribe to receive periodic emails with new product ideas by topic
+              </CardDescription>
+            </div>
+          </div>
+          <ChevronDown
+            className={cn(
+              "h-5 w-5 shrink-0 transition-transform duration-200 text-muted-foreground",
+              isExpanded && "rotate-180"
+            )}
+          />
         </div>
-        <CardDescription>
-          Subscribe to receive periodic emails with new product ideas by topic
-        </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      {isExpanded && (
+        <CardContent className="space-y-4">
         <div className="space-y-3">
           {topics.map((topic) => (
             <div key={topic.id} className="flex items-center space-x-2">
@@ -255,7 +272,8 @@ export function SubscriptionSection({ userId }: { userId: string }) {
             </Button>
           )}
         </div>
-      </CardContent>
+        </CardContent>
+      )}
     </Card>
   );
 }
