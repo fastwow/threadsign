@@ -4,15 +4,14 @@ This document describes the automated background jobs for idea generation.
 
 ## Overview
 
-Two cron jobs run automatically:
-1. **Reddit Post Generation** - Runs every 5 minutes
-   - Generates mock Reddit posts using LLM
-   - Scoped to Developer Tools topic and /startups subreddit
+A single daily pipeline cron job runs automatically:
+- **Daily Pipeline** - Runs daily at 09:00 Kyiv time (06:00 UTC)
+  - Executes three sequential steps in one job:
+    1. **Generate Mock Reddit Posts** - Generates at least 5 mock Reddit posts using LLM (scoped to Developer Tools topic and /startups subreddit)
+    2. **Generate Ideas** - Evaluates unprocessed Reddit posts, generates product ideas with viability scores (only stores ideas with score ≥ 60)
+    3. **Send Email Digests** - Sends email digests to subscribers with new ideas (only includes ideas that haven't been sent to each user before)
 
-2. **Idea Generation & Scoring** - Runs every 12 minutes
-   - Evaluates unprocessed Reddit posts
-   - Generates product ideas with viability scores
-   - Only stores ideas with score ≥ 60
+**Note:** This single-pipeline approach is configured for Vercel Hobby plan compatibility (daily cron jobs). All steps are idempotent and safe to re-run. The pipeline runs sequentially, so each step completes before the next begins.
 
 ## Environment Variables Required
 
@@ -36,11 +35,12 @@ Ensure the following exist in your database:
 
 ## Manual Testing
 
-You can test the cron endpoints manually:
+You can test the daily pipeline endpoint manually:
 ```bash
-curl "http://localhost:3000/api/cron/generate-reddit-posts?secret=YOUR_CRON_SECRET"
-curl "http://localhost:3000/api/cron/generate-ideas?secret=YOUR_CRON_SECRET"
+curl "http://localhost:3000/api/cron/daily-pipeline?secret=YOUR_CRON_SECRET"
 ```
+
+The pipeline will execute all three steps sequentially and return combined results.
 
 ## Notes
 

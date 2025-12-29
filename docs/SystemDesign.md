@@ -16,13 +16,16 @@ including architecture and Supabase schema.
 - Email: Resend
 
 ### High-Level Flow
-1. Reddit ingestion job generates new posts (runs every 5 minutes, generates at least 5 posts per run)
+A single daily pipeline executes three sequential steps:
+1. Reddit ingestion step generates new posts (generates at least 5 posts per run)
 2. Raw posts are stored as signal data only (no scoring or evaluation)
-3. LLM processes posts and generates ideas (runs every 12 minutes)
+3. LLM processes unprocessed posts and generates ideas
 4. Ideas are scored on 4 criteria (0-100 each), final score is average
 5. Ideas are stored and surfaced via feed (only ideas with average score ≥ 60)
 6. All posts are marked as processed regardless of score (prevents blocking)
-7. Email digests are sent to subscribers (runs every 20 minutes) with new ideas matching their topics
+7. Email digests are sent to subscribers with new ideas matching their topics
+
+**Note:** The pipeline runs once per day via Vercel Cron (Hobby plan compatible). All steps are idempotent and safe to re-run. For higher frequency, upgrade to Vercel Pro or adjust the cron schedule in `vercel.json`.
 
 All ingestion, LLM processing, and email sending
 run server-side using Supabase service role keys.
@@ -164,7 +167,7 @@ Email delivery tracking (implementation detail for metrics).
 - `email_deliveries` table tracks when emails were sent to subscribers
 - Stores Resend message IDs for delivery status lookups (if needed)
 - Used for metrics (email open rate, delivery rate) - implementation detail only
-- **Email Delivery Schedule:** Runs every 20 minutes
+- **Email Delivery Schedule:** Runs on a scheduled basis (daily by default; frequency can be adjusted based on deployment plan)
 - **Duplicate Prevention:** Emails include only ideas that haven't been sent to that user before (tracked via `email_deliveries.ideas_included`)
 - Each delivery includes all new ideas matching the user's subscribed topics since their last email
 

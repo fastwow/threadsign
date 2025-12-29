@@ -41,9 +41,10 @@ Product ideas from real discussion threads
    - Follow your platform's deployment instructions
    - Ensure all migrations have been run in your Supabase instance
 
-3. **Configure Vercel Cron jobs** (if using Vercel)
-   - The `vercel.json` file includes cron job configurations
-   - Verify cron jobs are active in your Vercel project settings
+3. **Configure Vercel Cron job** (if using Vercel)
+   - The `vercel.json` file includes a single daily pipeline cron job configuration
+   - The pipeline runs daily at 09:00 Kyiv time (06:00 UTC)
+   - Verify the cron job is active in your Vercel project settings
 
 ## Environment Variables
 

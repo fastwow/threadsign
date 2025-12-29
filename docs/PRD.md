@@ -65,7 +65,7 @@ ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked duri
 
 ## 4. Functional Requirements
 
-### Reddit Data Ingestion
+### Reddit Data Ingestion & Idea Generation
 - **Implementation:** Currently uses mocked Reddit data generated via LLM-based mock generator
   - Reddit posts are generated using LLM rather than fetched from Reddit API
   - Mock generation is scoped to Developer Tools topic and /startups subreddit for MVP
@@ -74,24 +74,24 @@ ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked duri
   - Mocked data is used temporarily during MVP development
   - Official Reddit API integration will replace mocks once API access is approved
   - This is an implementation detail only—no changes to product flow or features
-- Ingestion runs every 5 minutes on a scheduled basis
-- Generates at least 5 Reddit posts per run
-- Ingestion is asynchronous and scheduled
-
-### Idea Generation & Scoring
-- Runs every 12 minutes to evaluate newly ingested discussion posts
-- Uses LLM to extract pain points and generate product ideas
-- Each idea receives a viability score from 0–100
-- **Scoring Criteria (each scored independently 0–100):**
-  - Pain point intensity (0–100)
-  - Willingness to pay (0–100)
-  - Competitive landscape (0–100)
-  - TAM - Total Addressable Market (0–100)
-- **Final Score Calculation:** Simple average of all four criteria (sum / 4)
-- **Scoring Threshold:** Only ideas with an average score ≥ 60 are stored and surfaced to users
-- Individual criterion scores are persisted for breakdown display
-- Lower-scoring ideas are discarded (implementation detail)
-- LLM prompts and outputs are structured and versioned
+- **Daily Pipeline:** A single daily pipeline runs once per day, executing three sequential steps:
+  1. Generate mock Reddit posts (at least 5 posts per run)
+  2. Evaluate unprocessed posts and generate product ideas with viability scores
+  3. Send email digests to subscribers with new ideas
+- All steps run sequentially in one scheduled job (daily execution)
+- **Idea Scoring:**
+  - Uses LLM to extract pain points and generate product ideas
+  - Each idea receives a viability score from 0–100
+  - **Scoring Criteria (each scored independently 0–100):**
+    - Pain point intensity (0–100)
+    - Willingness to pay (0–100)
+    - Competitive landscape (0–100)
+    - TAM - Total Addressable Market (0–100)
+  - **Final Score Calculation:** Simple average of all four criteria (sum / 4)
+  - **Scoring Threshold:** Only ideas with an average score ≥ 60 are stored and surfaced to users
+  - Individual criterion scores are persisted for breakdown display
+  - Lower-scoring ideas are discarded (implementation detail)
+  - LLM prompts and outputs are structured and versioned
 
 ### Idea Feed
 - Displays generated product ideas
@@ -115,7 +115,7 @@ ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked duri
 
 ### Email Subscriptions
 - Topic-based subscriptions
-- Emails sent via Resend every 20 minutes
+- Daily email digests sent via Resend (part of the daily pipeline execution)
 - Emails include only new ideas matching subscribed topics
 - Duplicate prevention: ideas are sent to each user only once
 - Unsubscribe available via link or profile
@@ -134,10 +134,10 @@ ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked duri
 - Authentication handled by Supabase
 
 ### Scalability
-- Scheduled ingestion runs every 5 minutes
+- Daily pipeline runs once per day via scheduled cron job
 - Caching of ingested posts and generated ideas
 - MVP assumes low-to-moderate traffic
-- Batch ingestion to respect Reddit API limits (when API access is available)
+- Batch processing to respect Reddit API limits (when API access is available)
 
 ---
 

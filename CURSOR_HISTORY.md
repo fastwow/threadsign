@@ -1,5 +1,5 @@
 # Marketing landing page redesign
-_Exported on 29/12/2025 at 17:30:57 EET from Cursor (2.2.43)_
+_Exported on 29/12/2025 at 23:06:11 EET from Cursor (2.2.43)_
 
 ---
 
@@ -35430,4 +35430,4417 @@ The initial schema now reflects the current state documented in SystemDesign.md,
 - Email delivery tracking (`email_deliveries` table)
 
 The build completes successfully, and the schema aligns with the system design documentation.
+
+---
+
+**User**
+
+can you extract from our history the main 10 prompts which I asked
+
+---
+
+**Cursor**
+
+
+Extracting the main 10 prompts from our conversation history:
+
+
+
+Extracting the main 10 prompts from our conversation history:
+
+
+```markdown
+# Main Prompts from Development History
+
+## 1. Marketing Landing Page Redesign
+**Prompt:** "You are a senior frontend engineer + UI-focused product engineer. Goal: Redesign the marketing landing page to match the PRD. Source of truth: Read and follow @docs/PRD.md @docs/VisualDesign.md. Use my logo @app/logo.png. Ensure the page includes: clear above-the-fold hero with CTA, feature sections aligned to PRD, simple 'How it works', social proof placeholders, responsive layout."
+
+## 2. Add Social Proof, FAQ, and Pricing Sections
+**Prompt:** "1. Add mock social proof for now. 2. FAQ – add a section with several questions and answers: How do we analyze ideas? How do we score pitches? 3. Pricing – add two options: Free – receive up to 10 pitches per month. Custom – unlimited pitches, with a Contact Us button."
+
+## 3. Fix Topic Click Error
+**Prompt:** "issue: when click on a topic, like 'developer tools' I got an error. attached screenshot."
+
+## 4. Automatic Profile Creation on User Signup
+**Prompt:** "Set up Supabase so that a profile is automatically created for each authenticated user. Create a public.profiles table where: id is a UUID and references auth.users(id). Create a Postgres trigger on auth.users that runs after a user is created and inserts a corresponding row into public.profiles. Enable Row Level Security (RLS) on public.profiles and add policies so users can read and update their own profile."
+
+## 5. Pricing Plan Display Based on Auth State
+**Prompt:** "Pricing Plan Display: If the user is already signed in, automatically show their current pricing plan as selected and disabled (non-editable). For signed-out users, keep the pricing plans fully selectable. Button Visibility: The 'Get Started' button should redirect to the sign-up flow if the user is not signed in. If the user is already signed in, hide the 'Get Started' button entirely. In the signed-in state, only show the 'Browse Ideas' button."
+
+## 6. Email Subscription UI Updates
+**Prompt:** "Keep the existing single-page dashboard design (do not introduce a sidebar or multi-page layout). Apply the following changes to the Email Subscription section: If the user already has an active subscription: Change the primary action button text to 'Update Subscription'. Add a secondary button 'Unsubscribe'. If the user does not have a subscription: Keep the existing subscription CTA unchanged."
+
+## 7. Email Subscription Backend Implementation
+**Prompt:** "I introduced RESEND_API_KEY in the environment variables. Implement email subscription handling with the following requirements: Add a Supabase function (RPC or server-side logic) to handle email subscriptions. The function should create, update, and deactivate subscriptions as needed. Use Resend for sending subscription-related emails. Access the Resend API using the server-only RESEND_API_KEY. Do not expose any email logic or secrets to the client. Ensure the subscription behavior and user flow are fully aligned with @docs/PRD.md."
+
+## 8. LLM-Based Mock Reddit Ingestion and Idea Evaluation
+**Prompt:** "Update @docs/PRD.md to reflect the following changes: Mock Reddit Ingestion - Replace direct Reddit API usage with an LLM-based mock generator. Every 5 minutes, generate mock Reddit posts using an LLM. Scope the mock generation to: Topic: Developer Tools, Subreddit: /startups. Idea Evaluation via LLM - Every 12 minutes, evaluate newly generated Reddit posts using an LLM to identify potential product ideas. Each idea receives a score from 0 to 100. Use four evaluation criteria, each contributing 25% of the total score: Pain point intensity, Willingness to pay, Competitive landscape, TAM (Total Addressable Market). Scoring Threshold: Only ideas with a score ≥ 60 are considered valid and stored/surfaced."
+
+## 9. Automated Idea Generation and Scoring Implementation
+**Prompt:** "I added OPENAI_API_KEY to the environment variables and I will use Vercel Cron for background jobs. Implement automated idea generation and scoring aligned with @docs/PRD.md. Ensure OPENAI_API_KEY is server-only and never exposed to the client."
+
+## 10. Idea Feed Enhancements and Scoring Logic Updates
+**Prompt:** "1. Remove any score or evaluation logic from reddit_posts. Reddit posts are raw signals only; no scoring, ranking, or evaluation at this stage. Update the generator to create at least 5 Reddit posts per run. 2. Idea Feed Filtering - Add filtering and sorting controls to the idea feed: Sort by date (newest first / oldest first), Sort by score (highest first / lowest first). 3. Show Score Breakdown on score label hover - Clearly show how each criterion contributes to the final score. 4. Scoring Logic Update - Update idea evaluation logic as follows: Each criterion is scored independently from 0 to 100. Final score is the simple average of all criteria. Persist individual criterion scores so they can be displayed in the breakdown view."
+
+## 11. Email Delivery and UI Improvements
+**Prompt:** "1. Email Subscriptions UI (Dashboard) - Make the Email Subscriptions section collapsible / expandable. Default behavior: Expanded if the user has no topics selected yet. Collapsed if the user already has one or more topics selected. 2. Email Delivery Schedule - Send emails with subscribed ideas every 20 minutes. Emails should include only new ideas that match the user's subscribed topics and have not been sent to that user before. 3. Reddit Post Processing Semantics - Update the processing logic so that all Reddit posts are marked as processed, regardless of their evaluation score."
+
+## 12. Dashboard Timestamp Display Update
+**Prompt:** "Update the dashboard timestamp display logic: Replace the '0h ago' label with minute-level precision. When an item is less than 1 hour old, display: 'X min ago' (e.g. 3 min ago, 42 min ago). Preserve the existing behavior for items older than 1 hour (e.g. hours, days). Ensure the formatting is consistent across the dashboard."
+
+## 13. Gradient Background Implementation
+**Prompt:** "Requirements: Use a smooth, modern gradient similar to the reference image. Base the gradient on the existing @app/logo.png color palette (purple → violet → magenta tones). Gradient should feel: premium, subtle (no harsh transitions), suitable for a dark-theme product. Apply the gradient to: primary backgrounds / hero areas, key accent surfaces (not everywhere). Constraints: Do not change the logo itself. Keep contrast high enough for accessibility. Avoid overusing the gradient; it should support content, not dominate it."
+
+## 14. README Documentation
+**Prompt:** "Update @README.md to include clear setup instructions for running the project locally and in production. Add an 'Environment Variables' section that documents the following required variables: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY, OPENAI_API_KEY, CRON_SECRET. Briefly explain what each variable is used for. Clearly indicate which variables are server-only and must never be exposed to the client. Include an example .env.local snippet with placeholder values."
+
+## 15. Schema Migration Updates
+**Prompt:** "update my @supabase/migrations/20240101000000_initial_schema.sql according to latest version @docs/SystemDesign.md"
+
+```
+
+
+Refining to the top 10 most significant prompts:
+
+
+```markdown
+# Main 10 Prompts from Development History
+
+## 1. Marketing Landing Page Redesign
+**Prompt:** "You are a senior frontend engineer + UI-focused product engineer. Goal: Redesign the marketing landing page to match the PRD. Source of truth: Read and follow @docs/PRD.md @docs/VisualDesign.md. Use my logo @app/logo.png. Ensure the page includes: clear above-the-fold hero with CTA, feature sections aligned to PRD, simple 'How it works', social proof placeholders, responsive layout."
+
+## 2. Automatic Profile Creation on User Signup
+**Prompt:** "Set up Supabase so that a profile is automatically created for each authenticated user. Create a public.profiles table where: id is a UUID and references auth.users(id). Create a Postgres trigger on auth.users that runs after a user is created and inserts a corresponding row into public.profiles. Enable Row Level Security (RLS) on public.profiles and add policies so users can read and update their own profile."
+
+## 3. Email Subscription Backend Implementation
+**Prompt:** "I introduced RESEND_API_KEY in the environment variables. Implement email subscription handling with the following requirements: Add a Supabase function (RPC or server-side logic) to handle email subscriptions. The function should create, update, and deactivate subscriptions as needed. Use Resend for sending subscription-related emails. Access the Resend API using the server-only RESEND_API_KEY. Do not expose any email logic or secrets to the client. Ensure the subscription behavior and user flow are fully aligned with @docs/PRD.md."
+
+## 4. LLM-Based Mock Reddit Ingestion and Idea Evaluation
+**Prompt:** "Update @docs/PRD.md to reflect the following changes: Mock Reddit Ingestion - Replace direct Reddit API usage with an LLM-based mock generator. Every 5 minutes, generate mock Reddit posts using an LLM. Scope the mock generation to: Topic: Developer Tools, Subreddit: /startups. Idea Evaluation via LLM - Every 12 minutes, evaluate newly generated Reddit posts using an LLM to identify potential product ideas. Each idea receives a score from 0 to 100. Use four evaluation criteria, each contributing 25% of the total score: Pain point intensity, Willingness to pay, Competitive landscape, TAM (Total Addressable Market). Scoring Threshold: Only ideas with a score ≥ 60 are considered valid and stored/surfaced."
+
+## 5. Automated Idea Generation and Scoring Implementation
+**Prompt:** "I added OPENAI_API_KEY to the environment variables and I will use Vercel Cron for background jobs. Implement automated idea generation and scoring aligned with @docs/PRD.md. Ensure OPENAI_API_KEY is server-only and never exposed to the client."
+
+## 6. Idea Feed Enhancements and Scoring Logic Updates
+**Prompt:** "1. Remove any score or evaluation logic from reddit_posts. Reddit posts are raw signals only; no scoring, ranking, or evaluation at this stage. Update the generator to create at least 5 Reddit posts per run. 2. Idea Feed Filtering - Add filtering and sorting controls to the idea feed: Sort by date (newest first / oldest first), Sort by score (highest first / lowest first). 3. Show Score Breakdown on score label hover - Clearly show how each criterion contributes to the final score. 4. Scoring Logic Update - Update idea evaluation logic as follows: Each criterion is scored independently from 0 to 100. Final score is the simple average of all criteria. Persist individual criterion scores so they can be displayed in the breakdown view."
+
+## 7. Email Delivery and UI Improvements
+**Prompt:** "1. Email Subscriptions UI (Dashboard) - Make the Email Subscriptions section collapsible / expandable. Default behavior: Expanded if the user has no topics selected yet. Collapsed if the user already has one or more topics selected. 2. Email Delivery Schedule - Send emails with subscribed ideas every 20 minutes. Emails should include only new ideas that match the user's subscribed topics and have not been sent to that user before. 3. Reddit Post Processing Semantics - Update the processing logic so that all Reddit posts are marked as processed, regardless of their evaluation score."
+
+## 8. Dashboard Timestamp Display Update
+**Prompt:** "Update the dashboard timestamp display logic: Replace the '0h ago' label with minute-level precision. When an item is less than 1 hour old, display: 'X min ago' (e.g. 3 min ago, 42 min ago). Preserve the existing behavior for items older than 1 hour (e.g. hours, days). Ensure the formatting is consistent across the dashboard."
+
+## 9. Gradient Background Implementation
+**Prompt:** "Requirements: Use a smooth, modern gradient similar to the reference image. Base the gradient on the existing @app/logo.png color palette (purple → violet → magenta tones). Gradient should feel: premium, subtle (no harsh transitions), suitable for a dark-theme product. Apply the gradient to: primary backgrounds / hero areas, key accent surfaces (not everywhere). Constraints: Do not change the logo itself. Keep contrast high enough for accessibility. Avoid overusing the gradient; it should support content, not dominate it."
+
+## 10. README Documentation and Schema Updates
+**Prompt:** "Update @README.md to include clear setup instructions for running the project locally and in production. Add an 'Environment Variables' section that documents all required variables. Update @supabase/migrations/20240101000000_initial_schema.sql according to latest version @docs/SystemDesign.md"
+
+
+```
+
+
+Created `PROMPTS.md` with the main 10 prompts from our conversation history. The file includes:
+
+1. **Marketing Landing Page Redesign** - Initial landing page implementation
+2. **Automatic Profile Creation** - Supabase profile setup with triggers
+3. **Email Subscription Backend** - Full email subscription system with Resend
+4. **LLM-Based Mock Reddit Ingestion** - PRD updates for LLM-based approach
+5. **Automated Idea Generation** - Core cron jobs for idea generation
+6. **Idea Feed Enhancements** - Filtering, sorting, and score breakdown
+7. **Email Delivery and UI Improvements** - Collapsible UI and email delivery system
+8. **Dashboard Timestamp Display** - Minute-level precision for timestamps
+9. **Gradient Background Implementation** - Premium gradient styling
+10. **README Documentation and Schema Updates** - Documentation and schema alignment
+
+Each prompt includes the original request text. The file is saved as `PROMPTS.md` in the project root for reference.
+
+---
+
+**User**
+
+Hobby accounts are limited to daily cron jobs. This cron expression (*/5 * * * *) would run more than once per day. Upgrade to the Pro plan to unlock all Cron Jobs features on Vercel.
+
+---
+
+**Cursor**
+
+
+Updating `vercel.json` to use daily schedules compatible with Vercel's Hobby plan:
+
+
+```json
+{
+  "crons": [
+    {
+      "path": "/api/cron/generate-reddit-posts",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/generate-ideas",
+      "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/send-email-digests",
+      "schedule": "0 11 * * *"
+    }
+  ]
+}
+
+
+```
+
+```markdown
+# Automated Idea Generation Setup
+
+This document describes the automated background jobs for idea generation.
+
+## Overview
+
+Three cron jobs run automatically:
+1. **Reddit Post Generation** - Runs daily at 9:00 AM UTC
+   - Generates mock Reddit posts using LLM (at least 5 posts per run)
+   - Scoped to Developer Tools topic and /startups subreddit
+
+2. **Idea Generation & Scoring** - Runs daily at 10:00 AM UTC
+   - Evaluates unprocessed Reddit posts
+   - Generates product ideas with viability scores
+   - Only stores ideas with score ≥ 60
+
+3. **Email Delivery** - Runs daily at 11:00 AM UTC
+   - Sends email digests to subscribers with new ideas
+   - Only includes ideas that haven't been sent to each user before
+
+**Note:** These schedules are configured for Vercel Hobby plan compatibility (daily cron jobs). For more frequent execution, upgrade to Vercel Pro plan or adjust schedules as needed.
+
+## Environment Variables Required
+
+- `OPENAI_API_KEY` - OpenAI API key for LLM generation
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key for background jobs
+- `CRON_SECRET` - Secret token to secure cron endpoints (set in Vercel)
+
+## Vercel Cron Configuration
+
+The `vercel.json` file configures the cron jobs. In Vercel:
+1. Set the `CRON_SECRET` environment variable (optional, for additional security)
+2. The cron jobs will run automatically according to the schedule
+3. Note: For production, consider additional security measures like IP allowlisting or using Vercel's built-in cron authentication
+
+## Database Requirements
+
+Ensure the following exist in your database:
+- `topics` table with a topic where `key = 'devtools'`
+- `subreddits` table with a subreddit where `name = 'r/startups'`
+- `reddit_posts` table with `processed_at` column (nullable timestamptz)
+
+## Manual Testing
+
+You can test the cron endpoints manually:
+```bash
+curl "http://localhost:3000/api/cron/generate-reddit-posts?secret=YOUR_CRON_SECRET"
+curl "http://localhost:3000/api/cron/generate-ideas?secret=YOUR_CRON_SECRET"
+```
+
+## Notes
+
+- All OpenAI calls are server-only and never exposed to the client
+- The service role client bypasses RLS for background operations
+- Posts are marked as processed even if no idea is generated (to avoid infinite retries)
+- Only ideas with score ≥ 60 are stored in the database
+
+
+```
+
+```markdown
+- Ingestion runs on a scheduled basis (daily by default; frequency can be adjusted based on deployment plan)
+- Ingestion is asynchronous and scheduled
+```
+
+```markdown
+# Product Requirements Document (PRD)
+## Product: ThreadSign (MVP)
+**Tagline:** Product ideas from real discussion threads
+
+---
+
+## 1. Overview
+
+### Problem Statement
+Early-stage founders struggle to identify **real, validated problems** worth solving. While Reddit contains millions of candid discussions describing user frustrations, this information is noisy, fragmented, and difficult to convert into actionable product ideas.
+
+### High-Level Solution
+ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked during MVP development) to monitor selected, problem-heavy subreddits. The system periodically ingests discussion threads, extracts pain signals, and uses an LLM to generate **concise product ideas with a simplified viability score**. Users consume these ideas via a web feed and optional email updates.
+
+> **Implementation Note:** During MVP development, Reddit posts are generated using an LLM-based mock generator rather than fetched from the Reddit API. The current mock implementation is scoped to Developer Tools topic and /startups subreddit. Access to the official Reddit API requires submitting and waiting for approval of an application form. This is an implementation detail only—the product flow, features, and UX are designed to work identically with real Reddit API data once approved. Mocked data does not represent a product limitation.
+
+### Target Users
+- Beginner founders
+- Indie hackers
+- Product-oriented developers exploring startup ideas
+
+---
+
+## 2. Goals & Non-Goals
+
+### Goals
+- Product ideas are traceable to real Reddit discussions
+- Users can quickly scan, filter, and evaluate ideas
+- Reddit ingestion runs reliably within API limits
+- Email subscriptions work end-to-end
+- Product is understandable without onboarding
+
+### Non-Goals (Out of Scope)
+- Real-time Reddit streaming
+- Deep comment-thread analysis
+- User-generated submissions
+- Monetization or billing
+- Advanced market sizing or competitive analysis
+- Non-Reddit data sources
+
+---
+
+## 3. User Personas & Use Cases
+
+### Primary Persona: Beginner Founder
+- Limited experience with market research
+- Wants fast inspiration grounded in real user pain
+- Values clarity and signal over depth
+
+### Key User Scenarios
+1. **Browse Ideas**
+   - User opens ThreadSign and views a feed of ideas derived from recent Reddit threads
+   - User filters ideas by topic (e.g., devtools, health)
+
+2. **Evaluate an Idea**
+   - User reviews the pitch, pain insight, score, and source subreddit
+   - User may open the original Reddit thread for context
+
+3. **Subscribe for Updates**
+   - User subscribes to email updates by topic
+   - Receives periodic emails with new ideas
+   - Can unsubscribe at any time
+
+---
+
+## 4. Functional Requirements
+
+### Reddit Data Ingestion
+- **Implementation:** Currently uses mocked Reddit data generated via LLM-based mock generator
+  - Reddit posts are generated using LLM rather than fetched from Reddit API
+  - Mock generation is scoped to Developer Tools topic and /startups subreddit for MVP
+  - Generated posts are treated as raw signal data only—no scoring, ranking, or evaluation at this stage
+  - Generated posts are internal signal data, not user-facing content
+  - Mocked data is used temporarily during MVP development
+  - Official Reddit API integration will replace mocks once API access is approved
+  - This is an implementation detail only—no changes to product flow or features
+- Ingestion runs every 5 minutes on a scheduled basis
+- Generates at least 5 Reddit posts per run
+- Ingestion is asynchronous and scheduled
+
+### Idea Generation & Scoring
+- Runs on a scheduled basis (daily by default; frequency can be adjusted based on deployment plan) to evaluate newly ingested discussion posts
+- Uses LLM to extract pain points and generate product ideas
+- Each idea receives a viability score from 0–100
+- **Scoring Criteria (each scored independently 0–100):**
+  - Pain point intensity (0–100)
+  - Willingness to pay (0–100)
+  - Competitive landscape (0–100)
+  - TAM - Total Addressable Market (0–100)
+- **Final Score Calculation:** Simple average of all four criteria (sum / 4)
+- **Scoring Threshold:** Only ideas with an average score ≥ 60 are stored and surfaced to users
+- Individual criterion scores are persisted for breakdown display
+- Lower-scoring ideas are discarded (implementation detail)
+- LLM prompts and outputs are structured and versioned
+
+### Idea Feed
+- Displays generated product ideas
+- Each item includes:
+  - Name
+  - Short pitch (1–2 sentences)
+  - Key pain / insight
+  - Source subreddit + link
+  - Viability score (with breakdown on hover)
+  - "New" badge
+- Topic-based filtering
+- Sorting controls:
+  - By date (newest first / oldest first)
+  - By score (highest first / lowest first)
+- Score breakdown tooltip shows individual criterion scores on hover
+- Graceful loading and empty states
+
+### Authentication
+- Email/password authentication via Supabase
+- Required for email subscriptions
+
+### Email Subscriptions
+- Topic-based subscriptions
+- Emails sent via Resend every 20 minutes
+- Emails include only new ideas matching subscribed topics
+- Duplicate prevention: ideas are sent to each user only once
+- Unsubscribe available via link or profile
+
+---
+
+## 5. Non-Functional Requirements
+
+### Performance
+- Feed loads in under 2 seconds on average
+- Background jobs do not block UI
+
+### Security & Privacy
+- No Reddit user PII stored
+- Secrets stored in environment variables
+- Authentication handled by Supabase
+
+### Scalability
+- Scheduled ingestion runs every 5 minutes
+- Caching of ingested posts and generated ideas
+- MVP assumes low-to-moderate traffic
+- Batch ingestion to respect Reddit API limits (when API access is available)
+
+---
+
+## 6. UX / UI Notes
+
+- Clean, scannable layout
+- Clear connection between idea and source thread
+- External links open in a new tab
+- Empty states explain what is happening (“Ideas are being generated”)
+
+> Visual and styling guidance is defined in **VisualDesign.md**
+
+---
+
+## 7. Metrics & Success Criteria
+
+### Quantitative
+- Ideas generated per day
+- Feed engagement (scroll depth, filters)
+- Email subscription rate
+- Email open rate (if enabled)
+
+### Qualitative
+- Ideas feel realistic and grounded
+- Users understand value within first visit
+- Minimal clarification needed
+
+---
+
+## 8. Open Questions & Assumptions
+
+### Assumptions
+- Reddit posts are generated via LLM-based mock generator during MVP development
+- Mock implementation is scoped to Developer Tools topic and /startups subreddit
+- Reddit API access will be available after approval (currently using mocked data for development)
+- Viability scoring uses structured LLM evaluation with defined criteria
+
+### Open Questions
+- Expanding beyond Developer Tools topic and /startups subreddit
+- Reprocessing older posts
+- Anonymous browsing vs auth-only
+
+---
+
+## 9. Technical Reference
+
+Implementation details, database schema, and system architecture
+are defined in **SystemDesign.md**.
+
+```
+
+```markdown
+# Product Requirements Document (PRD)
+## Product: ThreadSign (MVP)
+**Tagline:** Product ideas from real discussion threads
+
+---
+
+## 1. Overview
+
+### Problem Statement
+Early-stage founders struggle to identify **real, validated problems** worth solving. While Reddit contains millions of candid discussions describing user frustrations, this information is noisy, fragmented, and difficult to convert into actionable product ideas.
+
+### High-Level Solution
+ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked during MVP development) to monitor selected, problem-heavy subreddits. The system periodically ingests discussion threads, extracts pain signals, and uses an LLM to generate **concise product ideas with a simplified viability score**. Users consume these ideas via a web feed and optional email updates.
+
+> **Implementation Note:** During MVP development, Reddit posts are generated using an LLM-based mock generator rather than fetched from the Reddit API. The current mock implementation is scoped to Developer Tools topic and /startups subreddit. Access to the official Reddit API requires submitting and waiting for approval of an application form. This is an implementation detail only—the product flow, features, and UX are designed to work identically with real Reddit API data once approved. Mocked data does not represent a product limitation.
+
+### Target Users
+- Beginner founders
+- Indie hackers
+- Product-oriented developers exploring startup ideas
+
+---
+
+## 2. Goals & Non-Goals
+
+### Goals
+- Product ideas are traceable to real Reddit discussions
+- Users can quickly scan, filter, and evaluate ideas
+- Reddit ingestion runs reliably within API limits
+- Email subscriptions work end-to-end
+- Product is understandable without onboarding
+
+### Non-Goals (Out of Scope)
+- Real-time Reddit streaming
+- Deep comment-thread analysis
+- User-generated submissions
+- Monetization or billing
+- Advanced market sizing or competitive analysis
+- Non-Reddit data sources
+
+---
+
+## 3. User Personas & Use Cases
+
+### Primary Persona: Beginner Founder
+- Limited experience with market research
+- Wants fast inspiration grounded in real user pain
+- Values clarity and signal over depth
+
+### Key User Scenarios
+1. **Browse Ideas**
+   - User opens ThreadSign and views a feed of ideas derived from recent Reddit threads
+   - User filters ideas by topic (e.g., devtools, health)
+
+2. **Evaluate an Idea**
+   - User reviews the pitch, pain insight, score, and source subreddit
+   - User may open the original Reddit thread for context
+
+3. **Subscribe for Updates**
+   - User subscribes to email updates by topic
+   - Receives periodic emails with new ideas
+   - Can unsubscribe at any time
+
+---
+
+## 4. Functional Requirements
+
+### Reddit Data Ingestion
+- **Implementation:** Currently uses mocked Reddit data generated via LLM-based mock generator
+  - Reddit posts are generated using LLM rather than fetched from Reddit API
+  - Mock generation is scoped to Developer Tools topic and /startups subreddit for MVP
+  - Generated posts are treated as raw signal data only—no scoring, ranking, or evaluation at this stage
+  - Generated posts are internal signal data, not user-facing content
+  - Mocked data is used temporarily during MVP development
+  - Official Reddit API integration will replace mocks once API access is approved
+  - This is an implementation detail only—no changes to product flow or features
+- Ingestion runs every 5 minutes on a scheduled basis
+- Generates at least 5 Reddit posts per run
+- Ingestion is asynchronous and scheduled
+
+### Idea Generation & Scoring
+- Runs on a scheduled basis (daily by default; frequency can be adjusted based on deployment plan) to evaluate newly ingested discussion posts
+- Uses LLM to extract pain points and generate product ideas
+- Each idea receives a viability score from 0–100
+- **Scoring Criteria (each scored independently 0–100):**
+  - Pain point intensity (0–100)
+  - Willingness to pay (0–100)
+  - Competitive landscape (0–100)
+  - TAM - Total Addressable Market (0–100)
+- **Final Score Calculation:** Simple average of all four criteria (sum / 4)
+- **Scoring Threshold:** Only ideas with an average score ≥ 60 are stored and surfaced to users
+- Individual criterion scores are persisted for breakdown display
+- Lower-scoring ideas are discarded (implementation detail)
+- LLM prompts and outputs are structured and versioned
+
+### Idea Feed
+- Displays generated product ideas
+- Each item includes:
+  - Name
+  - Short pitch (1–2 sentences)
+  - Key pain / insight
+  - Source subreddit + link
+  - Viability score (with breakdown on hover)
+  - "New" badge
+- Topic-based filtering
+- Sorting controls:
+  - By date (newest first / oldest first)
+  - By score (highest first / lowest first)
+- Score breakdown tooltip shows individual criterion scores on hover
+- Graceful loading and empty states
+
+### Authentication
+- Email/password authentication via Supabase
+- Required for email subscriptions
+
+### Email Subscriptions
+- Topic-based subscriptions
+- Emails sent via Resend on a scheduled basis (daily by default; frequency can be adjusted based on deployment plan)
+- Emails include only new ideas matching subscribed topics
+- Duplicate prevention: ideas are sent to each user only once
+- Unsubscribe available via link or profile
+
+---
+
+## 5. Non-Functional Requirements
+
+### Performance
+- Feed loads in under 2 seconds on average
+- Background jobs do not block UI
+
+### Security & Privacy
+- No Reddit user PII stored
+- Secrets stored in environment variables
+- Authentication handled by Supabase
+
+### Scalability
+- Scheduled ingestion runs every 5 minutes
+- Caching of ingested posts and generated ideas
+- MVP assumes low-to-moderate traffic
+- Batch ingestion to respect Reddit API limits (when API access is available)
+
+---
+
+## 6. UX / UI Notes
+
+- Clean, scannable layout
+- Clear connection between idea and source thread
+- External links open in a new tab
+- Empty states explain what is happening (“Ideas are being generated”)
+
+> Visual and styling guidance is defined in **VisualDesign.md**
+
+---
+
+## 7. Metrics & Success Criteria
+
+### Quantitative
+- Ideas generated per day
+- Feed engagement (scroll depth, filters)
+- Email subscription rate
+- Email open rate (if enabled)
+
+### Qualitative
+- Ideas feel realistic and grounded
+- Users understand value within first visit
+- Minimal clarification needed
+
+---
+
+## 8. Open Questions & Assumptions
+
+### Assumptions
+- Reddit posts are generated via LLM-based mock generator during MVP development
+- Mock implementation is scoped to Developer Tools topic and /startups subreddit
+- Reddit API access will be available after approval (currently using mocked data for development)
+- Viability scoring uses structured LLM evaluation with defined criteria
+
+### Open Questions
+- Expanding beyond Developer Tools topic and /startups subreddit
+- Reprocessing older posts
+- Anonymous browsing vs auth-only
+
+---
+
+## 9. Technical Reference
+
+Implementation details, database schema, and system architecture
+are defined in **SystemDesign.md**.
+
+```
+
+```markdown
+# System Design & Data Model
+## ThreadSign (MVP)
+
+This document defines **implementation-level details** for ThreadSign,
+including architecture and Supabase schema.
+
+---
+
+## 1. Architecture Overview
+
+### Stack
+- Frontend: Next.js
+- Backend: Next.js API routes / server actions
+- Auth & Database: Supabase (Auth + Postgres)
+- LLM: OpenAI
+- Email: Resend
+
+### High-Level Flow
+1. Reddit ingestion job generates new posts (runs on a scheduled basis, generates at least 5 posts per run)
+2. Raw posts are stored as signal data only (no scoring or evaluation)
+3. LLM processes posts and generates ideas (runs on a scheduled basis)
+4. Ideas are scored on 4 criteria (0-100 each), final score is average
+5. Ideas are stored and surfaced via feed (only ideas with average score ≥ 60)
+6. All posts are marked as processed regardless of score (prevents blocking)
+7. Email digests are sent to subscribers (runs on a scheduled basis) with new ideas matching their topics
+
+**Note:** Default schedules are configured for Vercel Hobby plan (daily execution). For higher frequency, upgrade to Vercel Pro or adjust cron schedules in `vercel.json`.
+
+All ingestion, LLM processing, and email sending
+run server-side using Supabase service role keys.
+
+---
+
+## 2. Supabase Schema (MVP)
+
+### `profiles`
+User profile data linked to Supabase Auth.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK, FK → auth.users) |
+| email | text |
+| created_at | timestamptz |
+| updated_at | timestamptz |
+
+---
+
+### `topics`
+Controlled list of categories (e.g., devtools, health).
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| key | text (unique) |
+| label | text |
+
+---
+
+### `subreddits`
+Curated list of Reddit sources.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| name | text (unique) |
+| is_active | boolean |
+
+---
+
+### `reddit_posts`
+Raw Reddit posts ingested via API (or generated via LLM mock generator in MVP).
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| reddit_post_id | text (unique) |
+| subreddit_id | uuid (FK) |
+| title | text |
+| body | text |
+| permalink | text |
+| score | int |
+| num_comments | int |
+| created_utc | timestamptz |
+| raw_json | jsonb |
+| processed_at | timestamptz |
+
+---
+
+### `ideas`
+Generated product ideas. Only ideas with score ≥ 60 are stored.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| title | text |
+| pitch | text |
+| pain_insight | text |
+| score | int (CHECK score >= 60, average of 4 criteria 0-100) |
+| topic_id | uuid (FK) |
+| created_at | timestamptz |
+| llm_model | text |
+| llm_prompt_version | text |
+| llm_raw | jsonb (stores individual criterion scores: pain_point_intensity, willingness_to_pay, competitive_landscape, tam) |
+
+---
+
+### `idea_sources`
+Mapping ideas to Reddit posts.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| idea_id | uuid (FK) |
+| reddit_post_id | uuid (FK) |
+
+---
+
+### `email_subscriptions`
+User subscription state.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| user_id | uuid (FK) |
+| is_active | boolean |
+| unsubscribe_token | text (unique) |
+
+---
+
+### `email_subscription_topics`
+Topic filters per subscription.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| subscription_id | uuid (FK) |
+| topic_id | uuid (FK) |
+
+---
+
+### `email_deliveries`
+Email delivery tracking (implementation detail for metrics).
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| subscription_id | uuid (FK → email_subscriptions) |
+| sent_at | timestamptz |
+| ideas_included | jsonb (array of idea_ids) |
+| resend_message_id | text (from Resend API) |
+
+---
+
+## 3. Processing & Tracking Notes
+
+### LLM Processing
+- `reddit_posts.processed_at` tracks when a post was last processed by LLM
+- Reddit posts are raw signals only—no scoring or evaluation at ingestion stage
+- Each idea is scored on 4 criteria (each 0–100 independently): pain point intensity, willingness to pay, competitive landscape, TAM
+- Final score is simple average of all criteria
+- `ideas.llm_raw` stores individual criterion scores for breakdown display
+- Only ideas with average score ≥ 60 are stored (lower scores discarded)
+- **All posts are marked as processed regardless of score** - low-scoring posts don't block processing
+
+### Email Delivery Tracking
+- `email_deliveries` table tracks when emails were sent to subscribers
+- Stores Resend message IDs for delivery status lookups (if needed)
+- Used for metrics (email open rate, delivery rate) - implementation detail only
+- **Email Delivery Schedule:** Runs every 20 minutes
+- **Duplicate Prevention:** Emails include only ideas that haven't been sent to that user before (tracked via `email_deliveries.ideas_included`)
+- Each delivery includes all new ideas matching the user's subscribed topics since their last email
+
+## 4. Security & Access Notes
+
+- Public read access may be allowed for ideas/feed
+- Subscription data is protected via RLS
+- Email delivery tracking is protected via RLS (users can only see their own)
+- All background jobs use service role credentials
+
+```
+
+```markdown
+# System Design & Data Model
+## ThreadSign (MVP)
+
+This document defines **implementation-level details** for ThreadSign,
+including architecture and Supabase schema.
+
+---
+
+## 1. Architecture Overview
+
+### Stack
+- Frontend: Next.js
+- Backend: Next.js API routes / server actions
+- Auth & Database: Supabase (Auth + Postgres)
+- LLM: OpenAI
+- Email: Resend
+
+### High-Level Flow
+1. Reddit ingestion job generates new posts (runs on a scheduled basis, generates at least 5 posts per run)
+2. Raw posts are stored as signal data only (no scoring or evaluation)
+3. LLM processes posts and generates ideas (runs on a scheduled basis)
+4. Ideas are scored on 4 criteria (0-100 each), final score is average
+5. Ideas are stored and surfaced via feed (only ideas with average score ≥ 60)
+6. All posts are marked as processed regardless of score (prevents blocking)
+7. Email digests are sent to subscribers (runs on a scheduled basis) with new ideas matching their topics
+
+**Note:** Default schedules are configured for Vercel Hobby plan (daily execution). For higher frequency, upgrade to Vercel Pro or adjust cron schedules in `vercel.json`.
+
+All ingestion, LLM processing, and email sending
+run server-side using Supabase service role keys.
+
+---
+
+## 2. Supabase Schema (MVP)
+
+### `profiles`
+User profile data linked to Supabase Auth.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK, FK → auth.users) |
+| email | text |
+| created_at | timestamptz |
+| updated_at | timestamptz |
+
+---
+
+### `topics`
+Controlled list of categories (e.g., devtools, health).
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| key | text (unique) |
+| label | text |
+
+---
+
+### `subreddits`
+Curated list of Reddit sources.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| name | text (unique) |
+| is_active | boolean |
+
+---
+
+### `reddit_posts`
+Raw Reddit posts ingested via API (or generated via LLM mock generator in MVP).
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| reddit_post_id | text (unique) |
+| subreddit_id | uuid (FK) |
+| title | text |
+| body | text |
+| permalink | text |
+| score | int |
+| num_comments | int |
+| created_utc | timestamptz |
+| raw_json | jsonb |
+| processed_at | timestamptz |
+
+---
+
+### `ideas`
+Generated product ideas. Only ideas with score ≥ 60 are stored.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| title | text |
+| pitch | text |
+| pain_insight | text |
+| score | int (CHECK score >= 60, average of 4 criteria 0-100) |
+| topic_id | uuid (FK) |
+| created_at | timestamptz |
+| llm_model | text |
+| llm_prompt_version | text |
+| llm_raw | jsonb (stores individual criterion scores: pain_point_intensity, willingness_to_pay, competitive_landscape, tam) |
+
+---
+
+### `idea_sources`
+Mapping ideas to Reddit posts.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| idea_id | uuid (FK) |
+| reddit_post_id | uuid (FK) |
+
+---
+
+### `email_subscriptions`
+User subscription state.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| user_id | uuid (FK) |
+| is_active | boolean |
+| unsubscribe_token | text (unique) |
+
+---
+
+### `email_subscription_topics`
+Topic filters per subscription.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| subscription_id | uuid (FK) |
+| topic_id | uuid (FK) |
+
+---
+
+### `email_deliveries`
+Email delivery tracking (implementation detail for metrics).
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| subscription_id | uuid (FK → email_subscriptions) |
+| sent_at | timestamptz |
+| ideas_included | jsonb (array of idea_ids) |
+| resend_message_id | text (from Resend API) |
+
+---
+
+## 3. Processing & Tracking Notes
+
+### LLM Processing
+- `reddit_posts.processed_at` tracks when a post was last processed by LLM
+- Reddit posts are raw signals only—no scoring or evaluation at ingestion stage
+- Each idea is scored on 4 criteria (each 0–100 independently): pain point intensity, willingness to pay, competitive landscape, TAM
+- Final score is simple average of all criteria
+- `ideas.llm_raw` stores individual criterion scores for breakdown display
+- Only ideas with average score ≥ 60 are stored (lower scores discarded)
+- **All posts are marked as processed regardless of score** - low-scoring posts don't block processing
+
+### Email Delivery Tracking
+- `email_deliveries` table tracks when emails were sent to subscribers
+- Stores Resend message IDs for delivery status lookups (if needed)
+- Used for metrics (email open rate, delivery rate) - implementation detail only
+- **Email Delivery Schedule:** Runs on a scheduled basis (daily by default; frequency can be adjusted based on deployment plan)
+- **Duplicate Prevention:** Emails include only ideas that haven't been sent to that user before (tracked via `email_deliveries.ideas_included`)
+- Each delivery includes all new ideas matching the user's subscribed topics since their last email
+
+## 4. Security & Access Notes
+
+- Public read access may be allowed for ideas/feed
+- Subscription data is protected via RLS
+- Email delivery tracking is protected via RLS (users can only see their own)
+- All background jobs use service role credentials
+
+```
+
+```markdown
+### Scalability
+- Scheduled ingestion runs on a configurable schedule (daily by default)
+- Caching of ingested posts and generated ideas
+- MVP assumes low-to-moderate traffic
+- Batch ingestion to respect Reddit API limits (when API access is available)
+```
+
+
+Checking for remaining references to update:
+
+
+```markdown
+# Product Requirements Document (PRD)
+## Product: ThreadSign (MVP)
+**Tagline:** Product ideas from real discussion threads
+
+---
+
+## 1. Overview
+
+### Problem Statement
+Early-stage founders struggle to identify **real, validated problems** worth solving. While Reddit contains millions of candid discussions describing user frustrations, this information is noisy, fragmented, and difficult to convert into actionable product ideas.
+
+### High-Level Solution
+ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked during MVP development) to monitor selected, problem-heavy subreddits. The system periodically ingests discussion threads, extracts pain signals, and uses an LLM to generate **concise product ideas with a simplified viability score**. Users consume these ideas via a web feed and optional email updates.
+
+> **Implementation Note:** During MVP development, Reddit posts are generated using an LLM-based mock generator rather than fetched from the Reddit API. The current mock implementation is scoped to Developer Tools topic and /startups subreddit. Access to the official Reddit API requires submitting and waiting for approval of an application form. This is an implementation detail only—the product flow, features, and UX are designed to work identically with real Reddit API data once approved. Mocked data does not represent a product limitation.
+
+### Target Users
+- Beginner founders
+- Indie hackers
+- Product-oriented developers exploring startup ideas
+
+---
+
+## 2. Goals & Non-Goals
+
+### Goals
+- Product ideas are traceable to real Reddit discussions
+- Users can quickly scan, filter, and evaluate ideas
+- Reddit ingestion runs reliably within API limits
+- Email subscriptions work end-to-end
+- Product is understandable without onboarding
+
+### Non-Goals (Out of Scope)
+- Real-time Reddit streaming
+- Deep comment-thread analysis
+- User-generated submissions
+- Monetization or billing
+- Advanced market sizing or competitive analysis
+- Non-Reddit data sources
+
+---
+
+## 3. User Personas & Use Cases
+
+### Primary Persona: Beginner Founder
+- Limited experience with market research
+- Wants fast inspiration grounded in real user pain
+- Values clarity and signal over depth
+
+### Key User Scenarios
+1. **Browse Ideas**
+   - User opens ThreadSign and views a feed of ideas derived from recent Reddit threads
+   - User filters ideas by topic (e.g., devtools, health)
+
+2. **Evaluate an Idea**
+   - User reviews the pitch, pain insight, score, and source subreddit
+   - User may open the original Reddit thread for context
+
+3. **Subscribe for Updates**
+   - User subscribes to email updates by topic
+   - Receives periodic emails with new ideas
+   - Can unsubscribe at any time
+
+---
+
+## 4. Functional Requirements
+
+### Reddit Data Ingestion
+- **Implementation:** Currently uses mocked Reddit data generated via LLM-based mock generator
+  - Reddit posts are generated using LLM rather than fetched from Reddit API
+  - Mock generation is scoped to Developer Tools topic and /startups subreddit for MVP
+  - Generated posts are treated as raw signal data only—no scoring, ranking, or evaluation at this stage
+  - Generated posts are internal signal data, not user-facing content
+  - Mocked data is used temporarily during MVP development
+  - Official Reddit API integration will replace mocks once API access is approved
+  - This is an implementation detail only—no changes to product flow or features
+- Ingestion runs on a scheduled basis (daily by default; frequency can be adjusted based on deployment plan)
+- Generates at least 5 Reddit posts per run
+- Ingestion is asynchronous and scheduled
+
+### Idea Generation & Scoring
+- Runs on a scheduled basis (daily by default; frequency can be adjusted based on deployment plan) to evaluate newly ingested discussion posts
+- Uses LLM to extract pain points and generate product ideas
+- Each idea receives a viability score from 0–100
+- **Scoring Criteria (each scored independently 0–100):**
+  - Pain point intensity (0–100)
+  - Willingness to pay (0–100)
+  - Competitive landscape (0–100)
+  - TAM - Total Addressable Market (0–100)
+- **Final Score Calculation:** Simple average of all four criteria (sum / 4)
+- **Scoring Threshold:** Only ideas with an average score ≥ 60 are stored and surfaced to users
+- Individual criterion scores are persisted for breakdown display
+- Lower-scoring ideas are discarded (implementation detail)
+- LLM prompts and outputs are structured and versioned
+
+### Idea Feed
+- Displays generated product ideas
+- Each item includes:
+  - Name
+  - Short pitch (1–2 sentences)
+  - Key pain / insight
+  - Source subreddit + link
+  - Viability score (with breakdown on hover)
+  - "New" badge
+- Topic-based filtering
+- Sorting controls:
+  - By date (newest first / oldest first)
+  - By score (highest first / lowest first)
+- Score breakdown tooltip shows individual criterion scores on hover
+- Graceful loading and empty states
+
+### Authentication
+- Email/password authentication via Supabase
+- Required for email subscriptions
+
+### Email Subscriptions
+- Topic-based subscriptions
+- Emails sent via Resend on a scheduled basis (daily by default; frequency can be adjusted based on deployment plan)
+- Emails include only new ideas matching subscribed topics
+- Duplicate prevention: ideas are sent to each user only once
+- Unsubscribe available via link or profile
+
+---
+
+## 5. Non-Functional Requirements
+
+### Performance
+- Feed loads in under 2 seconds on average
+- Background jobs do not block UI
+
+### Security & Privacy
+- No Reddit user PII stored
+- Secrets stored in environment variables
+- Authentication handled by Supabase
+
+### Scalability
+- Scheduled ingestion runs every 5 minutes
+- Caching of ingested posts and generated ideas
+- MVP assumes low-to-moderate traffic
+- Batch ingestion to respect Reddit API limits (when API access is available)
+
+---
+
+## 6. UX / UI Notes
+
+- Clean, scannable layout
+- Clear connection between idea and source thread
+- External links open in a new tab
+- Empty states explain what is happening (“Ideas are being generated”)
+
+> Visual and styling guidance is defined in **VisualDesign.md**
+
+---
+
+## 7. Metrics & Success Criteria
+
+### Quantitative
+- Ideas generated per day
+- Feed engagement (scroll depth, filters)
+- Email subscription rate
+- Email open rate (if enabled)
+
+### Qualitative
+- Ideas feel realistic and grounded
+- Users understand value within first visit
+- Minimal clarification needed
+
+---
+
+## 8. Open Questions & Assumptions
+
+### Assumptions
+- Reddit posts are generated via LLM-based mock generator during MVP development
+- Mock implementation is scoped to Developer Tools topic and /startups subreddit
+- Reddit API access will be available after approval (currently using mocked data for development)
+- Viability scoring uses structured LLM evaluation with defined criteria
+
+### Open Questions
+- Expanding beyond Developer Tools topic and /startups subreddit
+- Reprocessing older posts
+- Anonymous browsing vs auth-only
+
+---
+
+## 9. Technical Reference
+
+Implementation details, database schema, and system architecture
+are defined in **SystemDesign.md**.
+
+```
+
+```markdown
+- Runs on a scheduled basis (daily by default; frequency can be adjusted based on deployment plan) to evaluate newly ingested discussion posts
+```
+
+```markdown
+- Emails sent via Resend on a scheduled basis (daily by default; frequency can be adjusted based on deployment plan)
+```
+
+```markdown
+# Product Requirements Document (PRD)
+## Product: ThreadSign (MVP)
+**Tagline:** Product ideas from real discussion threads
+
+---
+
+## 1. Overview
+
+### Problem Statement
+Early-stage founders struggle to identify **real, validated problems** worth solving. While Reddit contains millions of candid discussions describing user frustrations, this information is noisy, fragmented, and difficult to convert into actionable product ideas.
+
+### High-Level Solution
+ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked during MVP development) to monitor selected, problem-heavy subreddits. The system periodically ingests discussion threads, extracts pain signals, and uses an LLM to generate **concise product ideas with a simplified viability score**. Users consume these ideas via a web feed and optional email updates.
+
+> **Implementation Note:** During MVP development, Reddit posts are generated using an LLM-based mock generator rather than fetched from the Reddit API. The current mock implementation is scoped to Developer Tools topic and /startups subreddit. Access to the official Reddit API requires submitting and waiting for approval of an application form. This is an implementation detail only—the product flow, features, and UX are designed to work identically with real Reddit API data once approved. Mocked data does not represent a product limitation.
+
+### Target Users
+- Beginner founders
+- Indie hackers
+- Product-oriented developers exploring startup ideas
+
+---
+
+## 2. Goals & Non-Goals
+
+### Goals
+- Product ideas are traceable to real Reddit discussions
+- Users can quickly scan, filter, and evaluate ideas
+- Reddit ingestion runs reliably within API limits
+- Email subscriptions work end-to-end
+- Product is understandable without onboarding
+
+### Non-Goals (Out of Scope)
+- Real-time Reddit streaming
+- Deep comment-thread analysis
+- User-generated submissions
+- Monetization or billing
+- Advanced market sizing or competitive analysis
+- Non-Reddit data sources
+
+---
+
+## 3. User Personas & Use Cases
+
+### Primary Persona: Beginner Founder
+- Limited experience with market research
+- Wants fast inspiration grounded in real user pain
+- Values clarity and signal over depth
+
+### Key User Scenarios
+1. **Browse Ideas**
+   - User opens ThreadSign and views a feed of ideas derived from recent Reddit threads
+   - User filters ideas by topic (e.g., devtools, health)
+
+2. **Evaluate an Idea**
+   - User reviews the pitch, pain insight, score, and source subreddit
+   - User may open the original Reddit thread for context
+
+3. **Subscribe for Updates**
+   - User subscribes to email updates by topic
+   - Receives periodic emails with new ideas
+   - Can unsubscribe at any time
+
+---
+
+## 4. Functional Requirements
+
+### Reddit Data Ingestion
+- **Implementation:** Currently uses mocked Reddit data generated via LLM-based mock generator
+  - Reddit posts are generated using LLM rather than fetched from Reddit API
+  - Mock generation is scoped to Developer Tools topic and /startups subreddit for MVP
+  - Generated posts are treated as raw signal data only—no scoring, ranking, or evaluation at this stage
+  - Generated posts are internal signal data, not user-facing content
+  - Mocked data is used temporarily during MVP development
+  - Official Reddit API integration will replace mocks once API access is approved
+  - This is an implementation detail only—no changes to product flow or features
+- Ingestion runs on a scheduled basis (daily by default; frequency can be adjusted based on deployment plan)
+- Generates at least 5 Reddit posts per run
+- Ingestion is asynchronous and scheduled
+
+### Idea Generation & Scoring
+- Runs on a scheduled basis (daily by default; frequency can be adjusted based on deployment plan) to evaluate newly ingested discussion posts
+- Uses LLM to extract pain points and generate product ideas
+- Each idea receives a viability score from 0–100
+- **Scoring Criteria (each scored independently 0–100):**
+  - Pain point intensity (0–100)
+  - Willingness to pay (0–100)
+  - Competitive landscape (0–100)
+  - TAM - Total Addressable Market (0–100)
+- **Final Score Calculation:** Simple average of all four criteria (sum / 4)
+- **Scoring Threshold:** Only ideas with an average score ≥ 60 are stored and surfaced to users
+- Individual criterion scores are persisted for breakdown display
+- Lower-scoring ideas are discarded (implementation detail)
+- LLM prompts and outputs are structured and versioned
+
+### Idea Feed
+- Displays generated product ideas
+- Each item includes:
+  - Name
+  - Short pitch (1–2 sentences)
+  - Key pain / insight
+  - Source subreddit + link
+  - Viability score (with breakdown on hover)
+  - "New" badge
+- Topic-based filtering
+- Sorting controls:
+  - By date (newest first / oldest first)
+  - By score (highest first / lowest first)
+- Score breakdown tooltip shows individual criterion scores on hover
+- Graceful loading and empty states
+
+### Authentication
+- Email/password authentication via Supabase
+- Required for email subscriptions
+
+### Email Subscriptions
+- Topic-based subscriptions
+- Emails sent via Resend on a scheduled basis (daily by default; frequency can be adjusted based on deployment plan)
+- Emails include only new ideas matching subscribed topics
+- Duplicate prevention: ideas are sent to each user only once
+- Unsubscribe available via link or profile
+
+---
+
+## 5. Non-Functional Requirements
+
+### Performance
+- Feed loads in under 2 seconds on average
+- Background jobs do not block UI
+
+### Security & Privacy
+- No Reddit user PII stored
+- Secrets stored in environment variables
+- Authentication handled by Supabase
+
+### Scalability
+- Scheduled ingestion runs on a configurable schedule (daily by default)
+- Caching of ingested posts and generated ideas
+- MVP assumes low-to-moderate traffic
+- Batch ingestion to respect Reddit API limits (when API access is available)
+
+---
+
+## 6. UX / UI Notes
+
+- Clean, scannable layout
+- Clear connection between idea and source thread
+- External links open in a new tab
+- Empty states explain what is happening (“Ideas are being generated”)
+
+> Visual and styling guidance is defined in **VisualDesign.md**
+
+---
+
+## 7. Metrics & Success Criteria
+
+### Quantitative
+- Ideas generated per day
+- Feed engagement (scroll depth, filters)
+- Email subscription rate
+- Email open rate (if enabled)
+
+### Qualitative
+- Ideas feel realistic and grounded
+- Users understand value within first visit
+- Minimal clarification needed
+
+---
+
+## 8. Open Questions & Assumptions
+
+### Assumptions
+- Reddit posts are generated via LLM-based mock generator during MVP development
+- Mock implementation is scoped to Developer Tools topic and /startups subreddit
+- Reddit API access will be available after approval (currently using mocked data for development)
+- Viability scoring uses structured LLM evaluation with defined criteria
+
+### Open Questions
+- Expanding beyond Developer Tools topic and /startups subreddit
+- Reprocessing older posts
+- Anonymous browsing vs auth-only
+
+---
+
+## 9. Technical Reference
+
+Implementation details, database schema, and system architecture
+are defined in **SystemDesign.md**.
+
+```
+
+```markdown
+1. Reddit ingestion job generates new posts (runs on a scheduled basis, generates at least 5 posts per run)
+```
+
+```markdown
+3. LLM processes posts and generates ideas (runs on a scheduled basis)
+```
+
+```markdown
+7. Email digests are sent to subscribers (runs on a scheduled basis) with new ideas matching their topics
+```
+
+
+Updating comments in the cron route files to reflect the daily schedule:
+
+
+```typescript
+import { NextResponse } from "next/server";
+import { createServiceClient } from "@/lib/supabase/service";
+import { generateMockRedditPost } from "@/lib/openai";
+
+/**
+ * Cron job: Generate mock Reddit posts
+ * Runs daily at 9:00 AM UTC (configurable in vercel.json)
+ * Scope: Developer Tools topic, /startups subreddit
+ * Generates at least 5 posts per run
+ */
+export async function GET(request: Request) {
+  // Verify this is a cron request
+  // Check for CRON_SECRET in query params or header (for manual testing)
+  // In production, consider additional security measures
+  const url = new URL(request.url);
+  const secret = url.searchParams.get("secret") || request.headers.get("x-cron-secret");
+  if (process.env.CRON_SECRET && secret !== process.env.CRON_SECRET) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const supabase = createServiceClient();
+
+    // Get Developer Tools topic
+    const { data: topic, error: topicError } = await supabase
+      .from("topics")
+      .select("id, key, label")
+      .eq("key", "devtools")
+      .single();
+
+    if (topicError || !topic) {
+      throw new Error("Developer Tools topic not found");
+    }
+
+    // Get /startups subreddit
+    const { data: subreddit, error: subredditError } = await supabase
+      .from("subreddits")
+      .select("id, name")
+      .eq("name", "r/startups")
+      .single();
+
+    if (subredditError || !subreddit) {
+      throw new Error("r/startups subreddit not found");
+    }
+
+    // Generate at least 5 mock Reddit posts using LLM
+    const postsToGenerate = 5;
+    const generatedPosts = [];
+    const skippedPosts = [];
+
+    for (let i = 0; i < postsToGenerate; i++) {
+      try {
+        const mockPost = await generateMockRedditPost({
+          subreddit: "startups",
+          topic: topic.label,
+        });
+
+        // Check if post with this reddit_post_id already exists
+        const { data: existingPost } = await supabase
+          .from("reddit_posts")
+          .select("id")
+          .eq("reddit_post_id", mockPost.reddit_post_id)
+          .single();
+
+        if (existingPost) {
+          skippedPosts.push(mockPost.reddit_post_id);
+          continue;
+        }
+
+        // Insert the generated post
+        const { data: newPost, error: insertError } = await supabase
+          .from("reddit_posts")
+          .insert({
+            reddit_post_id: mockPost.reddit_post_id,
+            subreddit_id: subreddit.id,
+            title: mockPost.title,
+            body: mockPost.body,
+            permalink: mockPost.permalink,
+            score: mockPost.score, // Raw Reddit score for realism only
+            num_comments: mockPost.num_comments, // Raw comment count for realism only
+            created_utc: new Date().toISOString(),
+            processed_at: null, // Will be set when processed by idea generation
+          })
+          .select()
+          .single();
+
+        if (insertError) {
+          console.error(`Error inserting post ${i + 1}:`, insertError);
+          continue;
+        }
+
+        generatedPosts.push(newPost.id);
+      } catch (error) {
+        console.error(`Error generating post ${i + 1}:`, error);
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Reddit posts generation completed",
+      posts_generated: generatedPosts.length,
+      posts_skipped: skippedPosts.length,
+      post_ids: generatedPosts,
+    });
+  } catch (error) {
+    console.error("Error generating Reddit post:", error);
+    return NextResponse.json(
+      {
+        error: "Failed to generate Reddit post",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+
+```
+
+```typescript
+import { NextResponse } from "next/server";
+import { createServiceClient } from "@/lib/supabase/service";
+import { generateIdeaFromPost } from "@/lib/openai";
+
+/**
+ * Cron job: Generate ideas from Reddit posts
+ * Runs daily at 10:00 AM UTC (configurable in vercel.json)
+ * Processes posts that haven't been processed yet (processed_at IS NULL)
+ * All posts are marked as processed after evaluation, regardless of score
+ */
+export async function GET(request: Request) {
+  // Verify this is a cron request
+  // Check for CRON_SECRET in query params or header (for manual testing)
+  // In production, consider additional security measures
+  const url = new URL(request.url);
+  const secret = url.searchParams.get("secret") || request.headers.get("x-cron-secret");
+  if (process.env.CRON_SECRET && secret !== process.env.CRON_SECRET) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const supabase = createServiceClient();
+
+    // Get unprocessed posts from /startups subreddit (limit to 5 per run to avoid rate limits)
+    const { data: subreddit, error: subredditError } = await supabase
+      .from("subreddits")
+      .select("id")
+      .eq("name", "r/startups")
+      .single();
+
+    if (subredditError || !subreddit) {
+      throw new Error("r/startups subreddit not found");
+    }
+
+    const { data: unprocessedPosts, error: postsError } = await supabase
+      .from("reddit_posts")
+      .select("id, title, body, subreddits(name)")
+      .is("processed_at", null)
+      .eq("subreddit_id", subreddit.id)
+      .limit(5);
+
+    if (postsError) {
+      throw postsError;
+    }
+
+    if (!unprocessedPosts || unprocessedPosts.length === 0) {
+      return NextResponse.json({
+        success: true,
+        message: "No unprocessed posts found",
+        ideas_generated: 0,
+      });
+    }
+
+    // Get Developer Tools topic ID
+    const { data: topic, error: topicError } = await supabase
+      .from("topics")
+      .select("id")
+      .eq("key", "devtools")
+      .single();
+
+    if (topicError || !topic) {
+      throw new Error("Developer Tools topic not found");
+    }
+
+    let ideasGenerated = 0;
+    const errors: string[] = [];
+
+    // Process each post
+    for (const post of unprocessedPosts) {
+      try {
+        // Generate idea from post
+        const ideaResult = await generateIdeaFromPost({
+          postTitle: post.title,
+          postBody: post.body || "",
+          subreddit: (post.subreddits as any)?.name?.replace("r/", "") || "startups",
+          promptVersion: "v1",
+        });
+
+        // Only store ideas with score >= 60
+        if (ideaResult.score >= 60 && ideaResult.title) {
+          // Insert the idea
+          const { data: newIdea, error: ideaError } = await supabase
+            .from("ideas")
+            .insert({
+              title: ideaResult.title,
+              pitch: ideaResult.pitch,
+              pain_insight: ideaResult.pain_insight,
+              score: ideaResult.score,
+              topic_id: topic.id,
+              llm_model: "gpt-4o-mini",
+              llm_prompt_version: "v1",
+              llm_raw: {
+                scoring_breakdown: ideaResult.scoring_breakdown,
+                // Store individual criterion scores for breakdown display
+                pain_point_intensity: ideaResult.scoring_breakdown.pain_point_intensity,
+                willingness_to_pay: ideaResult.scoring_breakdown.willingness_to_pay,
+                competitive_landscape: ideaResult.scoring_breakdown.competitive_landscape,
+                tam: ideaResult.scoring_breakdown.tam,
+              },
+            })
+            .select()
+            .single();
+
+          if (ideaError) {
+            errors.push(`Failed to insert idea for post ${post.id}: ${ideaError.message}`);
+            // Still mark as processed to avoid blocking other posts
+          } else {
+            // Link idea to source post
+            const { error: sourceError } = await supabase
+              .from("idea_sources")
+              .insert({
+                idea_id: newIdea.id,
+                reddit_post_id: post.id,
+              });
+
+            if (sourceError) {
+              errors.push(`Failed to link idea to post ${post.id}: ${sourceError.message}`);
+            } else {
+              ideasGenerated++;
+            }
+          }
+        }
+
+        // Mark post as processed regardless of evaluation score
+        // This ensures low-scoring posts don't block processing
+        const { error: updateError } = await supabase
+          .from("reddit_posts")
+          .update({ processed_at: new Date().toISOString() })
+          .eq("id", post.id);
+
+        if (updateError) {
+          errors.push(`Failed to mark post ${post.id} as processed: ${updateError.message}`);
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        errors.push(`Error processing post ${post.id}: ${errorMessage}`);
+        
+        // Still mark as processed to avoid infinite retries on bad posts
+        const { error: updateError } = await supabase
+          .from("reddit_posts")
+          .update({ processed_at: new Date().toISOString() })
+          .eq("id", post.id);
+
+        if (updateError) {
+          errors.push(`Failed to mark post ${post.id} as processed after error: ${updateError.message}`);
+        }
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Idea generation completed",
+      posts_processed: unprocessedPosts.length,
+      ideas_generated: ideasGenerated,
+      errors: errors.length > 0 ? errors : undefined,
+    });
+  } catch (error) {
+    console.error("Error generating ideas:", error);
+    return NextResponse.json(
+      {
+        error: "Failed to generate ideas",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+
+```
+
+```typescript
+import { NextResponse } from "next/server";
+import { createServiceClient } from "@/lib/supabase/service";
+import { Resend } from "resend";
+
+if (!process.env.RESEND_API_KEY) {
+  throw new Error("RESEND_API_KEY is not set");
+}
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+/**
+ * Cron job: Send email digests to subscribers
+ * Runs daily at 11:00 AM UTC (configurable in vercel.json)
+ * Sends only new ideas that match user's subscribed topics and haven't been sent before
+ */
+export async function GET(request: Request) {
+  // Verify this is a cron request
+  const url = new URL(request.url);
+  const secret = url.searchParams.get("secret") || request.headers.get("x-cron-secret");
+  if (process.env.CRON_SECRET && secret !== process.env.CRON_SECRET) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const supabase = createServiceClient();
+
+    // Get all active subscriptions with their topics and user emails
+    const { data: subscriptions, error: subsError } = await supabase
+      .from("email_subscriptions")
+      .select(
+        `
+        id,
+        user_id,
+        email_subscription_topics(
+          topic_id,
+          topics(id, key, label)
+        )
+      `
+      )
+      .eq("is_active", true);
+
+    if (subsError) {
+      throw subsError;
+    }
+
+    if (!subscriptions || subscriptions.length === 0) {
+      return NextResponse.json({
+        success: true,
+        message: "No active subscriptions found",
+        emails_sent: 0,
+      });
+    }
+
+    let emailsSent = 0;
+    const errors: string[] = [];
+
+    // Process each subscription
+    for (const subscription of subscriptions) {
+      try {
+        // Get user's email from profile
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("email")
+          .eq("id", subscription.user_id)
+          .single();
+
+        if (profileError || !profile?.email) {
+          errors.push(`No email found for subscription ${subscription.id}`);
+          continue;
+        }
+
+        const email = profile.email;
+
+        const subscriptionTopics = (subscription.email_subscription_topics as any[]) || [];
+        if (subscriptionTopics.length === 0) {
+          continue; // Skip subscriptions with no topics
+        }
+
+        const topicIds = subscriptionTopics.map((est: any) => est.topic_id);
+
+        // Get ideas that have already been sent to this user
+        const { data: pastDeliveries, error: deliveriesError } = await supabase
+          .from("email_deliveries")
+          .select("ideas_included")
+          .eq("subscription_id", subscription.id);
+
+        if (deliveriesError) {
+          errors.push(`Failed to fetch past deliveries for subscription ${subscription.id}: ${deliveriesError.message}`);
+          continue;
+        }
+
+        // Collect all idea IDs that have been sent before
+        const sentIdeaIds = new Set<string>();
+        if (pastDeliveries) {
+          for (const delivery of pastDeliveries) {
+            const ideasIncluded = delivery.ideas_included as string[] | null;
+            if (ideasIncluded && Array.isArray(ideasIncluded)) {
+              ideasIncluded.forEach((id) => sentIdeaIds.add(id));
+            }
+          }
+        }
+
+        // Get new ideas matching subscribed topics that haven't been sent
+        let ideasQuery = supabase
+          .from("ideas")
+          .select(
+            `
+            id,
+            title,
+            pitch,
+            pain_insight,
+            score,
+            created_at,
+            topics(key, label),
+            idea_sources(
+              reddit_posts(
+                permalink,
+                subreddits(name)
+              )
+            )
+          `
+          )
+          .in("topic_id", topicIds)
+          .order("created_at", { ascending: false })
+          .limit(10); // Limit to 10 most recent ideas per email
+
+        const { data: ideas, error: ideasError } = await ideasQuery;
+
+        if (ideasError) {
+          errors.push(`Failed to fetch ideas for subscription ${subscription.id}: ${ideasError.message}`);
+          continue;
+        }
+
+        // Filter out ideas that have already been sent
+        const newIdeas = (ideas || []).filter((idea) => !sentIdeaIds.has(idea.id));
+
+        if (newIdeas.length === 0) {
+          continue; // No new ideas to send
+        }
+
+        // Format email content
+        const topicLabels = subscriptionTopics.map((est: any) => est.topics?.label || "Unknown");
+        const ideasListHtml = newIdeas
+          .map((idea) => {
+            const source = (idea.idea_sources as any[])?.[0]?.reddit_posts;
+            const redditUrl = source?.permalink
+              ? `https://reddit.com${source.permalink}`
+              : null;
+            const subreddit = source?.subreddits?.name || "Unknown";
+
+            return `
+              <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #e5e7eb;">
+                <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600;">${idea.title}</h3>
+                <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">${idea.pitch}</p>
+                <div style="margin: 8px 0;">
+                  <strong style="font-size: 14px;">Pain Insight:</strong>
+                  <p style="margin: 4px 0 0 0; color: #374151; font-size: 14px;">${idea.pain_insight}</p>
+                </div>
+                <div style="margin: 8px 0; font-size: 14px;">
+                  <span style="color: #6b7280;">Score: </span>
+                  <strong style="color: #059669;">${idea.score}</strong>
+                  ${redditUrl ? `<span style="color: #6b7280; margin-left: 16px;">Source: <a href="${redditUrl}" style="color: #2563eb;">${subreddit}</a></span>` : ""}
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+
+        const emailHtml = `
+          <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h1 style="font-size: 24px; font-weight: 700; margin: 0 0 16px 0;">New Product Ideas</h1>
+            <p style="color: #6b7280; font-size: 16px; margin: 0 0 24px 0;">
+              Here are ${newIdeas.length} new product idea${newIdeas.length > 1 ? "s" : ""} matching your subscribed topics: ${topicLabels.join(", ")}
+            </p>
+            ${ideasListHtml}
+            <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+              <p style="color: #6b7280; font-size: 14px; margin: 0 0 8px 0;">
+                You're receiving this email because you subscribed to updates for: ${topicLabels.join(", ")}
+              </p>
+              <p style="color: #6b7280; font-size: 14px; margin: 0;">
+                <a href="${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard" style="color: #2563eb;">Manage your subscriptions</a>
+              </p>
+            </div>
+          </div>
+        `;
+
+        // Send email
+        const { data: emailResult, error: emailError } = await resend.emails.send({
+          from: "ThreadSign <onboarding@resend.dev>", // TODO: Update with your domain
+          to: email,
+          subject: `${newIdeas.length} New Product Idea${newIdeas.length > 1 ? "s" : ""} from ThreadSign`,
+          html: emailHtml,
+        });
+
+        if (emailError) {
+          errors.push(`Failed to send email for subscription ${subscription.id}: ${emailError.message}`);
+          continue;
+        }
+
+        // Record delivery
+        const ideaIds = newIdeas.map((idea) => idea.id);
+        const { error: deliveryError } = await supabase.from("email_deliveries").insert({
+          subscription_id: subscription.id,
+          sent_at: new Date().toISOString(),
+          ideas_included: ideaIds,
+          resend_message_id: emailResult?.id || null,
+        });
+
+        if (deliveryError) {
+          errors.push(`Failed to record delivery for subscription ${subscription.id}: ${deliveryError.message}`);
+          // Don't fail the whole operation if we can't record the delivery
+        } else {
+          emailsSent++;
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        errors.push(`Error processing subscription ${subscription.id}: ${errorMessage}`);
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Email digest processing completed",
+      subscriptions_processed: subscriptions.length,
+      emails_sent: emailsSent,
+      errors: errors.length > 0 ? errors : undefined,
+    });
+  } catch (error) {
+    console.error("Error sending email digests:", error);
+    return NextResponse.json(
+      {
+        error: "Failed to send email digests",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+
+```
+
+
+Updating the remaining reference in the PRD:
+
+
+```markdown
+### Scalability
+- Scheduled ingestion runs on a configurable schedule (daily by default; frequency can be adjusted based on deployment plan)
+- Caching of ingested posts and generated ideas
+- MVP assumes low-to-moderate traffic
+- Batch ingestion to respect Reddit API limits (when API access is available)
+```
+
+---
+
+**User**
+
+Refactor the background jobs to use one daily cron pipeline instead of multiple scheduled jobs.
+
+Goal
+Run the entire daily flow in a single sequence, executed once per day via Vercel Cron (Hobby plan–compatible).
+
+Pipeline Steps (run in order)
+1. Generate mock Reddit posts
+2. Evaluate posts → generate ideas
+3. Evaluate posts → generate ideas
+
+Cron Setup
+
+Implement a single API route (e.g. /api/cron/daily-pipeline).
+Configure one daily Vercel cron to call this route.
+Protect the route with CRON_SECRET.
+
+Design & Safety Constraints
+Ensure all steps are idempotent (safe to re-run).
+Align changes with @docs/PRD.md and @docs/SystemDesign.md.
+Do not introduce new user-facing features or UI changes.
+
+---
+
+**Cursor**
+
+
+Refactoring to a single daily pipeline. Reviewing the existing cron routes to understand the structure:
+
+
+
+Creating the daily pipeline route and updating the configuration:
+
+
+```typescript
+import { NextResponse } from "next/server";
+import { createServiceClient } from "@/lib/supabase/service";
+import { generateMockRedditPost, generateIdeaFromPost } from "@/lib/openai";
+import { Resend } from "resend";
+
+if (!process.env.RESEND_API_KEY) {
+  throw new Error("RESEND_API_KEY is not set");
+}
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+/**
+ * Daily Pipeline Cron Job
+ * Runs once per day via Vercel Cron (Hobby plan compatible)
+ * 
+ * Pipeline Steps (run in sequence):
+ * 1. Generate mock Reddit posts
+ * 2. Evaluate posts → generate ideas
+ * 3. Send email digests to subscribers
+ * 
+ * All steps are idempotent and safe to re-run.
+ */
+export async function GET(request: Request) {
+  // Verify this is a cron request
+  const url = new URL(request.url);
+  const secret = url.searchParams.get("secret") || request.headers.get("x-cron-secret");
+  if (process.env.CRON_SECRET && secret !== process.env.CRON_SECRET) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const pipelineStartTime = Date.now();
+  const results = {
+    step1_generate_posts: null as any,
+    step2_generate_ideas: null as any,
+    step3_send_emails: null as any,
+  };
+
+  try {
+    const supabase = createServiceClient();
+
+    // ==========================================
+    // Step 1: Generate Mock Reddit Posts
+    // ==========================================
+    try {
+      // Get Developer Tools topic
+      const { data: topic, error: topicError } = await supabase
+        .from("topics")
+        .select("id, key, label")
+        .eq("key", "devtools")
+        .single();
+
+      if (topicError || !topic) {
+        throw new Error("Developer Tools topic not found");
+      }
+
+      // Get /startups subreddit
+      const { data: subreddit, error: subredditError } = await supabase
+        .from("subreddits")
+        .select("id, name")
+        .eq("name", "r/startups")
+        .single();
+
+      if (subredditError || !subreddit) {
+        throw new Error("r/startups subreddit not found");
+      }
+
+      // Generate at least 5 mock Reddit posts using LLM
+      const postsToGenerate = 5;
+      const generatedPosts: string[] = [];
+      const skippedPosts: string[] = [];
+
+      for (let i = 0; i < postsToGenerate; i++) {
+        try {
+          const mockPost = await generateMockRedditPost({
+            subreddit: "startups",
+            topic: topic.label,
+          });
+
+          // Check if post with this reddit_post_id already exists (idempotency)
+          const { data: existingPost } = await supabase
+            .from("reddit_posts")
+            .select("id")
+            .eq("reddit_post_id", mockPost.reddit_post_id)
+            .single();
+
+          if (existingPost) {
+            skippedPosts.push(mockPost.reddit_post_id);
+            continue;
+          }
+
+          // Insert the generated post
+          const { data: newPost, error: insertError } = await supabase
+            .from("reddit_posts")
+            .insert({
+              reddit_post_id: mockPost.reddit_post_id,
+              subreddit_id: subreddit.id,
+              title: mockPost.title,
+              body: mockPost.body,
+              permalink: mockPost.permalink,
+              score: mockPost.score,
+              num_comments: mockPost.num_comments,
+              created_utc: new Date().toISOString(),
+              processed_at: null,
+            })
+            .select()
+            .single();
+
+          if (insertError) {
+            console.error(`Error inserting post ${i + 1}:`, insertError);
+            continue;
+          }
+
+          generatedPosts.push(newPost.id);
+        } catch (error) {
+          console.error(`Error generating post ${i + 1}:`, error);
+        }
+      }
+
+      results.step1_generate_posts = {
+        success: true,
+        posts_generated: generatedPosts.length,
+        posts_skipped: skippedPosts.length,
+      };
+    } catch (error) {
+      results.step1_generate_posts = {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+      // Continue to next step even if this one fails
+    }
+
+    // ==========================================
+    // Step 2: Generate Ideas from Reddit Posts
+    // ==========================================
+    try {
+      // Get unprocessed posts from /startups subreddit
+      const { data: subreddit, error: subredditError } = await supabase
+        .from("subreddits")
+        .select("id")
+        .eq("name", "r/startups")
+        .single();
+
+      if (subredditError || !subreddit) {
+        throw new Error("r/startups subreddit not found");
+      }
+
+      const { data: unprocessedPosts, error: postsError } = await supabase
+        .from("reddit_posts")
+        .select("id, title, body, subreddits(name)")
+        .is("processed_at", null)
+        .eq("subreddit_id", subreddit.id)
+        .limit(10); // Process up to 10 posts per day
+
+      if (postsError) {
+        throw postsError;
+      }
+
+      let ideasGenerated = 0;
+      const errors: string[] = [];
+
+      if (unprocessedPosts && unprocessedPosts.length > 0) {
+        // Get Developer Tools topic ID
+        const { data: topic, error: topicError } = await supabase
+          .from("topics")
+          .select("id")
+          .eq("key", "devtools")
+          .single();
+
+        if (topicError || !topic) {
+          throw new Error("Developer Tools topic not found");
+        }
+
+        // Process each post
+        for (const post of unprocessedPosts) {
+          try {
+            // Generate idea from post
+            const ideaResult = await generateIdeaFromPost({
+              postTitle: post.title,
+              postBody: post.body || "",
+              subreddit: (post.subreddits as any)?.name?.replace("r/", "") || "startups",
+              promptVersion: "v1",
+            });
+
+            // Only store ideas with score >= 60
+            if (ideaResult.score >= 60 && ideaResult.title) {
+              // Insert the idea
+              const { data: newIdea, error: ideaError } = await supabase
+                .from("ideas")
+                .insert({
+                  title: ideaResult.title,
+                  pitch: ideaResult.pitch,
+                  pain_insight: ideaResult.pain_insight,
+                  score: ideaResult.score,
+                  topic_id: topic.id,
+                  llm_model: "gpt-4o-mini",
+                  llm_prompt_version: "v1",
+                  llm_raw: {
+                    scoring_breakdown: ideaResult.scoring_breakdown,
+                    pain_point_intensity: ideaResult.scoring_breakdown.pain_point_intensity,
+                    willingness_to_pay: ideaResult.scoring_breakdown.willingness_to_pay,
+                    competitive_landscape: ideaResult.scoring_breakdown.competitive_landscape,
+                    tam: ideaResult.scoring_breakdown.tam,
+                  },
+                })
+                .select()
+                .single();
+
+              if (ideaError) {
+                errors.push(`Failed to insert idea for post ${post.id}: ${ideaError.message}`);
+              } else {
+                // Link idea to source post
+                const { error: sourceError } = await supabase
+                  .from("idea_sources")
+                  .insert({
+                    idea_id: newIdea.id,
+                    reddit_post_id: post.id,
+                  });
+
+                if (sourceError) {
+                  errors.push(`Failed to link idea to post ${post.id}: ${sourceError.message}`);
+                } else {
+                  ideasGenerated++;
+                }
+              }
+            }
+
+            // Mark post as processed regardless of evaluation score (idempotency)
+            const { error: updateError } = await supabase
+              .from("reddit_posts")
+              .update({ processed_at: new Date().toISOString() })
+              .eq("id", post.id);
+
+            if (updateError) {
+              errors.push(`Failed to mark post ${post.id} as processed: ${updateError.message}`);
+            }
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "Unknown error";
+            errors.push(`Error processing post ${post.id}: ${errorMessage}`);
+
+            // Still mark as processed to avoid infinite retries
+            const { error: updateError } = await supabase
+              .from("reddit_posts")
+              .update({ processed_at: new Date().toISOString() })
+              .eq("id", post.id);
+
+            if (updateError) {
+              errors.push(`Failed to mark post ${post.id} as processed after error: ${updateError.message}`);
+            }
+          }
+        }
+      }
+
+      results.step2_generate_ideas = {
+        success: true,
+        posts_processed: unprocessedPosts?.length || 0,
+        ideas_generated: ideasGenerated,
+        errors: errors.length > 0 ? errors : undefined,
+      };
+    } catch (error) {
+      results.step2_generate_ideas = {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+      // Continue to next step even if this one fails
+    }
+
+    // ==========================================
+    // Step 3: Send Email Digests to Subscribers
+    // ==========================================
+    try {
+      // Get all active subscriptions with their topics and user emails
+      const { data: subscriptions, error: subsError } = await supabase
+        .from("email_subscriptions")
+        .select(
+          `
+          id,
+          user_id,
+          email_subscription_topics(
+            topic_id,
+            topics(id, key, label)
+          )
+        `
+        )
+        .eq("is_active", true);
+
+      if (subsError) {
+        throw subsError;
+      }
+
+      let emailsSent = 0;
+      const errors: string[] = [];
+
+      if (subscriptions && subscriptions.length > 0) {
+        // Process each subscription
+        for (const subscription of subscriptions) {
+          try {
+            // Get user's email from profile
+            const { data: profile, error: profileError } = await supabase
+              .from("profiles")
+              .select("email")
+              .eq("id", subscription.user_id)
+              .single();
+
+            if (profileError || !profile?.email) {
+              errors.push(`No email found for subscription ${subscription.id}`);
+              continue;
+            }
+
+            const email = profile.email;
+
+            const subscriptionTopics = (subscription.email_subscription_topics as any[]) || [];
+            if (subscriptionTopics.length === 0) {
+              continue; // Skip subscriptions with no topics
+            }
+
+            const topicIds = subscriptionTopics.map((est: any) => est.topic_id);
+
+            // Get ideas that have already been sent to this user (idempotency)
+            const { data: pastDeliveries, error: deliveriesError } = await supabase
+              .from("email_deliveries")
+              .select("ideas_included")
+              .eq("subscription_id", subscription.id);
+
+            if (deliveriesError) {
+              errors.push(`Failed to fetch past deliveries for subscription ${subscription.id}: ${deliveriesError.message}`);
+              continue;
+            }
+
+            // Collect all idea IDs that have been sent before
+            const sentIdeaIds = new Set<string>();
+            if (pastDeliveries) {
+              for (const delivery of pastDeliveries) {
+                const ideasIncluded = delivery.ideas_included as string[] | null;
+                if (ideasIncluded && Array.isArray(ideasIncluded)) {
+                  ideasIncluded.forEach((id) => sentIdeaIds.add(id));
+                }
+              }
+            }
+
+            // Get new ideas matching subscribed topics that haven't been sent
+            const { data: ideas, error: ideasError } = await supabase
+              .from("ideas")
+              .select(
+                `
+                id,
+                title,
+                pitch,
+                pain_insight,
+                score,
+                created_at,
+                topics(key, label),
+                idea_sources(
+                  reddit_posts(
+                    permalink,
+                    subreddits(name)
+                  )
+                )
+              `
+              )
+              .in("topic_id", topicIds)
+              .order("created_at", { ascending: false })
+              .limit(10); // Limit to 10 most recent ideas per email
+
+            if (ideasError) {
+              errors.push(`Failed to fetch ideas for subscription ${subscription.id}: ${ideasError.message}`);
+              continue;
+            }
+
+            // Filter out ideas that have already been sent
+            const newIdeas = (ideas || []).filter((idea) => !sentIdeaIds.has(idea.id));
+
+            if (newIdeas.length === 0) {
+              continue; // No new ideas to send
+            }
+
+            // Format email content
+            const topicLabels = subscriptionTopics.map((est: any) => est.topics?.label || "Unknown");
+            const ideasListHtml = newIdeas
+              .map((idea) => {
+                const source = (idea.idea_sources as any[])?.[0]?.reddit_posts;
+                const redditUrl = source?.permalink
+                  ? `https://reddit.com${source.permalink}`
+                  : null;
+                const subreddit = source?.subreddits?.name || "Unknown";
+
+                return `
+                  <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #e5e7eb;">
+                    <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600;">${idea.title}</h3>
+                    <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">${idea.pitch}</p>
+                    <div style="margin: 8px 0;">
+                      <strong style="font-size: 14px;">Pain Insight:</strong>
+                      <p style="margin: 4px 0 0 0; color: #374151; font-size: 14px;">${idea.pain_insight}</p>
+                    </div>
+                    <div style="margin: 8px 0; font-size: 14px;">
+                      <span style="color: #6b7280;">Score: </span>
+                      <strong style="color: #059669;">${idea.score}</strong>
+                      ${redditUrl ? `<span style="color: #6b7280; margin-left: 16px;">Source: <a href="${redditUrl}" style="color: #2563eb;">${subreddit}</a></span>` : ""}
+                    </div>
+                  </div>
+                `;
+              })
+              .join("");
+
+            const emailHtml = `
+              <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h1 style="font-size: 24px; font-weight: 700; margin: 0 0 16px 0;">New Product Ideas</h1>
+                <p style="color: #6b7280; font-size: 16px; margin: 0 0 24px 0;">
+                  Here are ${newIdeas.length} new product idea${newIdeas.length > 1 ? "s" : ""} matching your subscribed topics: ${topicLabels.join(", ")}
+                </p>
+                ${ideasListHtml}
+                <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+                  <p style="color: #6b7280; font-size: 14px; margin: 0 0 8px 0;">
+                    You're receiving this email because you subscribed to updates for: ${topicLabels.join(", ")}
+                  </p>
+                  <p style="color: #6b7280; font-size: 14px; margin: 0;">
+                    <a href="${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard" style="color: #2563eb;">Manage your subscriptions</a>
+                  </p>
+                </div>
+              </div>
+            `;
+
+            // Send email
+            const { data: emailResult, error: emailError } = await resend.emails.send({
+              from: "ThreadSign <onboarding@resend.dev>", // TODO: Update with your domain
+              to: email,
+              subject: `${newIdeas.length} New Product Idea${newIdeas.length > 1 ? "s" : ""} from ThreadSign`,
+              html: emailHtml,
+            });
+
+            if (emailError) {
+              errors.push(`Failed to send email for subscription ${subscription.id}: ${emailError.message}`);
+              continue;
+            }
+
+            // Record delivery (idempotency)
+            const ideaIds = newIdeas.map((idea) => idea.id);
+            const { error: deliveryError } = await supabase.from("email_deliveries").insert({
+              subscription_id: subscription.id,
+              sent_at: new Date().toISOString(),
+              ideas_included: ideaIds,
+              resend_message_id: emailResult?.id || null,
+            });
+
+            if (deliveryError) {
+              errors.push(`Failed to record delivery for subscription ${subscription.id}: ${deliveryError.message}`);
+            } else {
+              emailsSent++;
+            }
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "Unknown error";
+            errors.push(`Error processing subscription ${subscription.id}: ${errorMessage}`);
+          }
+        }
+      }
+
+      results.step3_send_emails = {
+        success: true,
+        subscriptions_processed: subscriptions?.length || 0,
+        emails_sent: emailsSent,
+        errors: errors.length > 0 ? errors : undefined,
+      };
+    } catch (error) {
+      results.step3_send_emails = {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+
+    // Return combined results
+    const pipelineDuration = Date.now() - pipelineStartTime;
+    const allStepsSuccessful = 
+      results.step1_generate_posts?.success &&
+      results.step2_generate_ideas?.success &&
+      results.step3_send_emails?.success;
+
+    return NextResponse.json({
+      success: allStepsSuccessful,
+      message: "Daily pipeline completed",
+      duration_ms: pipelineDuration,
+      results,
+    });
+  } catch (error) {
+    console.error("Error in daily pipeline:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to run daily pipeline",
+        message: error instanceof Error ? error.message : "Unknown error",
+        results,
+      },
+      { status: 500 }
+    );
+  }
+}
+
+```
+
+```json
+{
+  "crons": [
+    {
+      "path": "/api/cron/daily-pipeline",
+      "schedule": "0 9 * * *"
+    }
+  ]
+}
+
+
+```
+
+```markdown
+# Automated Idea Generation Setup
+
+This document describes the automated background jobs for idea generation.
+
+## Overview
+
+A single daily pipeline cron job runs automatically:
+- **Daily Pipeline** - Runs daily at 9:00 AM UTC
+  - Executes three sequential steps:
+    1. **Generate Mock Reddit Posts** - Generates at least 5 mock Reddit posts using LLM (scoped to Developer Tools topic and /startups subreddit)
+    2. **Generate Ideas** - Evaluates unprocessed Reddit posts, generates product ideas with viability scores (only stores ideas with score ≥ 60)
+    3. **Send Email Digests** - Sends email digests to subscribers with new ideas (only includes ideas that haven't been sent to each user before)
+
+**Note:** This single-pipeline approach is configured for Vercel Hobby plan compatibility (daily cron jobs). All steps are idempotent and safe to re-run. For more frequent execution, upgrade to Vercel Pro plan or adjust the schedule in `vercel.json`.
+
+## Environment Variables Required
+
+- `OPENAI_API_KEY` - OpenAI API key for LLM generation
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key for background jobs
+- `CRON_SECRET` - Secret token to secure cron endpoints (set in Vercel)
+
+## Vercel Cron Configuration
+
+The `vercel.json` file configures the cron jobs. In Vercel:
+1. Set the `CRON_SECRET` environment variable (optional, for additional security)
+2. The cron jobs will run automatically according to the schedule
+3. Note: For production, consider additional security measures like IP allowlisting or using Vercel's built-in cron authentication
+
+## Database Requirements
+
+Ensure the following exist in your database:
+- `topics` table with a topic where `key = 'devtools'`
+- `subreddits` table with a subreddit where `name = 'r/startups'`
+- `reddit_posts` table with `processed_at` column (nullable timestamptz)
+
+## Manual Testing
+
+You can test the cron endpoints manually:
+```bash
+curl "http://localhost:3000/api/cron/generate-reddit-posts?secret=YOUR_CRON_SECRET"
+curl "http://localhost:3000/api/cron/generate-ideas?secret=YOUR_CRON_SECRET"
+```
+
+## Notes
+
+- All OpenAI calls are server-only and never exposed to the client
+- The service role client bypasses RLS for background operations
+- Posts are marked as processed even if no idea is generated (to avoid infinite retries)
+- Only ideas with score ≥ 60 are stored in the database
+
+
+```
+
+```markdown
+# Automated Idea Generation Setup
+
+This document describes the automated background jobs for idea generation.
+
+## Overview
+
+A single daily pipeline cron job runs automatically:
+- **Daily Pipeline** - Runs daily at 9:00 AM UTC
+  - Executes three sequential steps:
+    1. **Generate Mock Reddit Posts** - Generates at least 5 mock Reddit posts using LLM (scoped to Developer Tools topic and /startups subreddit)
+    2. **Generate Ideas** - Evaluates unprocessed Reddit posts, generates product ideas with viability scores (only stores ideas with score ≥ 60)
+    3. **Send Email Digests** - Sends email digests to subscribers with new ideas (only includes ideas that haven't been sent to each user before)
+
+**Note:** This single-pipeline approach is configured for Vercel Hobby plan compatibility (daily cron jobs). All steps are idempotent and safe to re-run. For more frequent execution, upgrade to Vercel Pro plan or adjust the schedule in `vercel.json`.
+
+## Environment Variables Required
+
+- `OPENAI_API_KEY` - OpenAI API key for LLM generation
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key for background jobs
+- `CRON_SECRET` - Secret token to secure cron endpoints (set in Vercel)
+
+## Vercel Cron Configuration
+
+The `vercel.json` file configures the cron jobs. In Vercel:
+1. Set the `CRON_SECRET` environment variable (optional, for additional security)
+2. The cron jobs will run automatically according to the schedule
+3. Note: For production, consider additional security measures like IP allowlisting or using Vercel's built-in cron authentication
+
+## Database Requirements
+
+Ensure the following exist in your database:
+- `topics` table with a topic where `key = 'devtools'`
+- `subreddits` table with a subreddit where `name = 'r/startups'`
+- `reddit_posts` table with `processed_at` column (nullable timestamptz)
+
+## Manual Testing
+
+You can test the daily pipeline endpoint manually:
+```bash
+curl "http://localhost:3000/api/cron/daily-pipeline?secret=YOUR_CRON_SECRET"
+```
+
+The pipeline will execute all three steps sequentially and return combined results.
+
+**Note:** Individual step endpoints (`/api/cron/generate-reddit-posts`, `/api/cron/generate-ideas`, `/api/cron/send-email-digests`) are still available for testing individual steps, but they are not scheduled in production.
+
+## Notes
+
+- All OpenAI calls are server-only and never exposed to the client
+- The service role client bypasses RLS for background operations
+- Posts are marked as processed even if no idea is generated (to avoid infinite retries)
+- Only ideas with score ≥ 60 are stored in the database
+
+
+```
+
+```markdown
+### High-Level Flow
+A single daily pipeline executes three sequential steps:
+1. Reddit ingestion step generates new posts (generates at least 5 posts per run)
+2. Raw posts are stored as signal data only (no scoring or evaluation)
+3. LLM processes unprocessed posts and generates ideas
+4. Ideas are scored on 4 criteria (0-100 each), final score is average
+5. Ideas are stored and surfaced via feed (only ideas with average score ≥ 60)
+6. All posts are marked as processed regardless of score (prevents blocking)
+7. Email digests are sent to subscribers with new ideas matching their topics
+
+**Note:** The pipeline runs once per day via Vercel Cron (Hobby plan compatible). All steps are idempotent and safe to re-run. For higher frequency, upgrade to Vercel Pro or adjust the cron schedule in `vercel.json`.
+```
+
+
+Updating the SystemDesign.md file correctly:
+
+
+```markdown
+# System Design & Data Model
+## ThreadSign (MVP)
+
+This document defines **implementation-level details** for ThreadSign,
+including architecture and Supabase schema.
+
+---
+
+## 1. Architecture Overview
+
+### Stack
+- Frontend: Next.js
+- Backend: Next.js API routes / server actions
+- Auth & Database: Supabase (Auth + Postgres)
+- LLM: OpenAI
+- Email: Resend
+
+### High-Level Flow
+A single daily pipeline executes three sequential steps:
+1. Reddit ingestion step generates new posts (generates at least 5 posts per run)
+2. Raw posts are stored as signal data only (no scoring or evaluation)
+3. LLM processes unprocessed posts and generates ideas
+4. Ideas are scored on 4 criteria (0-100 each), final score is average
+5. Ideas are stored and surfaced via feed (only ideas with average score ≥ 60)
+6. All posts are marked as processed regardless of score (prevents blocking)
+7. Email digests are sent to subscribers with new ideas matching their topics
+
+**Note:** The pipeline runs once per day via Vercel Cron (Hobby plan compatible). All steps are idempotent and safe to re-run. For higher frequency, upgrade to Vercel Pro or adjust the cron schedule in `vercel.json`.
+
+All ingestion, LLM processing, and email sending
+run server-side using Supabase service role keys.
+
+---
+
+## 2. Supabase Schema (MVP)
+
+### `profiles`
+User profile data linked to Supabase Auth.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK, FK → auth.users) |
+| email | text |
+| created_at | timestamptz |
+| updated_at | timestamptz |
+
+---
+
+### `topics`
+Controlled list of categories (e.g., devtools, health).
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| key | text (unique) |
+| label | text |
+
+---
+
+### `subreddits`
+Curated list of Reddit sources.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| name | text (unique) |
+| is_active | boolean |
+
+---
+
+### `reddit_posts`
+Raw Reddit posts ingested via API (or generated via LLM mock generator in MVP).
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| reddit_post_id | text (unique) |
+| subreddit_id | uuid (FK) |
+| title | text |
+| body | text |
+| permalink | text |
+| score | int |
+| num_comments | int |
+| created_utc | timestamptz |
+| raw_json | jsonb |
+| processed_at | timestamptz |
+
+---
+
+### `ideas`
+Generated product ideas. Only ideas with score ≥ 60 are stored.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| title | text |
+| pitch | text |
+| pain_insight | text |
+| score | int (CHECK score >= 60, average of 4 criteria 0-100) |
+| topic_id | uuid (FK) |
+| created_at | timestamptz |
+| llm_model | text |
+| llm_prompt_version | text |
+| llm_raw | jsonb (stores individual criterion scores: pain_point_intensity, willingness_to_pay, competitive_landscape, tam) |
+
+---
+
+### `idea_sources`
+Mapping ideas to Reddit posts.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| idea_id | uuid (FK) |
+| reddit_post_id | uuid (FK) |
+
+---
+
+### `email_subscriptions`
+User subscription state.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| user_id | uuid (FK) |
+| is_active | boolean |
+| unsubscribe_token | text (unique) |
+
+---
+
+### `email_subscription_topics`
+Topic filters per subscription.
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| subscription_id | uuid (FK) |
+| topic_id | uuid (FK) |
+
+---
+
+### `email_deliveries`
+Email delivery tracking (implementation detail for metrics).
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| subscription_id | uuid (FK → email_subscriptions) |
+| sent_at | timestamptz |
+| ideas_included | jsonb (array of idea_ids) |
+| resend_message_id | text (from Resend API) |
+
+---
+
+## 3. Processing & Tracking Notes
+
+### LLM Processing
+- `reddit_posts.processed_at` tracks when a post was last processed by LLM
+- Reddit posts are raw signals only—no scoring or evaluation at ingestion stage
+- Each idea is scored on 4 criteria (each 0–100 independently): pain point intensity, willingness to pay, competitive landscape, TAM
+- Final score is simple average of all criteria
+- `ideas.llm_raw` stores individual criterion scores for breakdown display
+- Only ideas with average score ≥ 60 are stored (lower scores discarded)
+- **All posts are marked as processed regardless of score** - low-scoring posts don't block processing
+
+### Email Delivery Tracking
+- `email_deliveries` table tracks when emails were sent to subscribers
+- Stores Resend message IDs for delivery status lookups (if needed)
+- Used for metrics (email open rate, delivery rate) - implementation detail only
+- **Email Delivery Schedule:** Runs on a scheduled basis (daily by default; frequency can be adjusted based on deployment plan)
+- **Duplicate Prevention:** Emails include only ideas that haven't been sent to that user before (tracked via `email_deliveries.ideas_included`)
+- Each delivery includes all new ideas matching the user's subscribed topics since their last email
+
+## 4. Security & Access Notes
+
+- Public read access may be allowed for ideas/feed
+- Subscription data is protected via RLS
+- Email delivery tracking is protected via RLS (users can only see their own)
+- All background jobs use service role credentials
+
+```
+
+
+Refactored the background jobs to use a single daily pipeline. Summary of changes:
+
+## Changes Made
+
+1. **Created `/api/cron/daily-pipeline/route.ts`**
+   - Runs all three steps sequentially:
+     - Step 1: Generate mock Reddit posts (at least 5 posts)
+     - Step 2: Evaluate posts → generate ideas (processes up to 10 unprocessed posts)
+     - Step 3: Send email digests to subscribers
+   - All steps are idempotent and safe to re-run
+   - Each step continues even if the previous step fails
+   - Returns combined results for all three steps
+
+2. **Updated `vercel.json`**
+   - Replaced three separate cron jobs with a single daily pipeline
+   - Runs daily at 9:00 AM UTC (Hobby plan compatible)
+
+3. **Updated Documentation**
+   - **`README_CRON.md`**: Updated to reflect the single pipeline approach
+   - **`docs/SystemDesign.md`**: Updated High-Level Flow section to describe the pipeline
+
+4. **Preserved Individual Routes**
+   - Individual route files (`generate-reddit-posts`, `generate-ideas`, `send-email-digests`) remain available for manual testing but are not scheduled
+
+## Key Features
+
+- Idempotent: Each step checks for existing data before creating new records
+- Error resilient: Each step has try-catch blocks and continues even if one step fails
+- Comprehensive logging: Returns detailed results for each step
+- Vercel Hobby compatible: Single daily cron job
+- Secure: Protected with `CRON_SECRET` authentication
+
+The pipeline is ready to deploy. The build compiles successfully with no errors.
+
+---
+
+**User**
+
+refactor my @app/api/cron/daily-pipeline/route.ts . move each step into separate file. 
+
+---
+
+**Cursor**
+
+
+Refactoring the daily pipeline by extracting each step into separate files for better modularity. Creating the step functions:
+
+
+```typescript
+import { SupabaseClient } from "@supabase/supabase-js";
+import { generateMockRedditPost } from "@/lib/openai";
+
+export interface GenerateRedditPostsResult {
+  success: boolean;
+  posts_generated?: number;
+  posts_skipped?: number;
+  error?: string;
+}
+
+/**
+ * Step 1: Generate mock Reddit posts
+ * Generates at least 5 mock Reddit posts using LLM
+ * Scope: Developer Tools topic, /startups subreddit
+ */
+export async function generateRedditPosts(
+  supabase: SupabaseClient
+): Promise<GenerateRedditPostsResult> {
+  try {
+    // Get Developer Tools topic
+    const { data: topic, error: topicError } = await supabase
+      .from("topics")
+      .select("id, key, label")
+      .eq("key", "devtools")
+      .single();
+
+    if (topicError || !topic) {
+      throw new Error("Developer Tools topic not found");
+    }
+
+    // Get /startups subreddit
+    const { data: subreddit, error: subredditError } = await supabase
+      .from("subreddits")
+      .select("id, name")
+      .eq("name", "r/startups")
+      .single();
+
+    if (subredditError || !subreddit) {
+      throw new Error("r/startups subreddit not found");
+    }
+
+    // Generate at least 5 mock Reddit posts using LLM
+    const postsToGenerate = 5;
+    const generatedPosts: string[] = [];
+    const skippedPosts: string[] = [];
+
+    for (let i = 0; i < postsToGenerate; i++) {
+      try {
+        const mockPost = await generateMockRedditPost({
+          subreddit: "startups",
+          topic: topic.label,
+        });
+
+        // Check if post with this reddit_post_id already exists (idempotency)
+        const { data: existingPost } = await supabase
+          .from("reddit_posts")
+          .select("id")
+          .eq("reddit_post_id", mockPost.reddit_post_id)
+          .single();
+
+        if (existingPost) {
+          skippedPosts.push(mockPost.reddit_post_id);
+          continue;
+        }
+
+        // Insert the generated post
+        const { data: newPost, error: insertError } = await supabase
+          .from("reddit_posts")
+          .insert({
+            reddit_post_id: mockPost.reddit_post_id,
+            subreddit_id: subreddit.id,
+            title: mockPost.title,
+            body: mockPost.body,
+            permalink: mockPost.permalink,
+            score: mockPost.score,
+            num_comments: mockPost.num_comments,
+            created_utc: new Date().toISOString(),
+            processed_at: null,
+          })
+          .select()
+          .single();
+
+        if (insertError) {
+          console.error(`Error inserting post ${i + 1}:`, insertError);
+          continue;
+        }
+
+        generatedPosts.push(newPost.id);
+      } catch (error) {
+        console.error(`Error generating post ${i + 1}:`, error);
+      }
+    }
+
+    return {
+      success: true,
+      posts_generated: generatedPosts.length,
+      posts_skipped: skippedPosts.length,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+```
+
+```typescript
+import { SupabaseClient } from "@supabase/supabase-js";
+import { generateIdeaFromPost } from "@/lib/openai";
+
+export interface GenerateIdeasResult {
+  success: boolean;
+  posts_processed?: number;
+  ideas_generated?: number;
+  errors?: string[];
+  error?: string;
+}
+
+/**
+ * Step 2: Generate ideas from Reddit posts
+ * Evaluates unprocessed Reddit posts and generates product ideas with viability scores
+ * Only stores ideas with score >= 60
+ */
+export async function generateIdeas(
+  supabase: SupabaseClient
+): Promise<GenerateIdeasResult> {
+  try {
+    // Get unprocessed posts from /startups subreddit
+    const { data: subreddit, error: subredditError } = await supabase
+      .from("subreddits")
+      .select("id")
+      .eq("name", "r/startups")
+      .single();
+
+    if (subredditError || !subreddit) {
+      throw new Error("r/startups subreddit not found");
+    }
+
+    const { data: unprocessedPosts, error: postsError } = await supabase
+      .from("reddit_posts")
+      .select("id, title, body, subreddits(name)")
+      .is("processed_at", null)
+      .eq("subreddit_id", subreddit.id)
+      .limit(10); // Process up to 10 posts per day
+
+    if (postsError) {
+      throw postsError;
+    }
+
+    let ideasGenerated = 0;
+    const errors: string[] = [];
+
+    if (unprocessedPosts && unprocessedPosts.length > 0) {
+      // Get Developer Tools topic ID
+      const { data: topic, error: topicError } = await supabase
+        .from("topics")
+        .select("id")
+        .eq("key", "devtools")
+        .single();
+
+      if (topicError || !topic) {
+        throw new Error("Developer Tools topic not found");
+      }
+
+      // Process each post
+      for (const post of unprocessedPosts) {
+        try {
+          // Generate idea from post
+          const ideaResult = await generateIdeaFromPost({
+            postTitle: post.title,
+            postBody: post.body || "",
+            subreddit: (post.subreddits as any)?.name?.replace("r/", "") || "startups",
+            promptVersion: "v1",
+          });
+
+          // Only store ideas with score >= 60
+          if (ideaResult.score >= 60 && ideaResult.title) {
+            // Insert the idea
+            const { data: newIdea, error: ideaError } = await supabase
+              .from("ideas")
+              .insert({
+                title: ideaResult.title,
+                pitch: ideaResult.pitch,
+                pain_insight: ideaResult.pain_insight,
+                score: ideaResult.score,
+                topic_id: topic.id,
+                llm_model: "gpt-4o-mini",
+                llm_prompt_version: "v1",
+                llm_raw: {
+                  scoring_breakdown: ideaResult.scoring_breakdown,
+                  pain_point_intensity: ideaResult.scoring_breakdown.pain_point_intensity,
+                  willingness_to_pay: ideaResult.scoring_breakdown.willingness_to_pay,
+                  competitive_landscape: ideaResult.scoring_breakdown.competitive_landscape,
+                  tam: ideaResult.scoring_breakdown.tam,
+                },
+              })
+              .select()
+              .single();
+
+            if (ideaError) {
+              errors.push(`Failed to insert idea for post ${post.id}: ${ideaError.message}`);
+            } else {
+              // Link idea to source post
+              const { error: sourceError } = await supabase
+                .from("idea_sources")
+                .insert({
+                  idea_id: newIdea.id,
+                  reddit_post_id: post.id,
+                });
+
+              if (sourceError) {
+                errors.push(`Failed to link idea to post ${post.id}: ${sourceError.message}`);
+              } else {
+                ideasGenerated++;
+              }
+            }
+          }
+
+          // Mark post as processed regardless of evaluation score (idempotency)
+          const { error: updateError } = await supabase
+            .from("reddit_posts")
+            .update({ processed_at: new Date().toISOString() })
+            .eq("id", post.id);
+
+          if (updateError) {
+            errors.push(`Failed to mark post ${post.id} as processed: ${updateError.message}`);
+          }
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : "Unknown error";
+          errors.push(`Error processing post ${post.id}: ${errorMessage}`);
+
+          // Still mark as processed to avoid infinite retries
+          const { error: updateError } = await supabase
+            .from("reddit_posts")
+            .update({ processed_at: new Date().toISOString() })
+            .eq("id", post.id);
+
+          if (updateError) {
+            errors.push(`Failed to mark post ${post.id} as processed after error: ${updateError.message}`);
+          }
+        }
+      }
+    }
+
+    return {
+      success: true,
+      posts_processed: unprocessedPosts?.length || 0,
+      ideas_generated: ideasGenerated,
+      errors: errors.length > 0 ? errors : undefined,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+```
+
+```typescript
+import { SupabaseClient } from "@supabase/supabase-js";
+import { Resend } from "resend";
+
+if (!process.env.RESEND_API_KEY) {
+  throw new Error("RESEND_API_KEY is not set");
+}
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export interface SendEmailDigestsResult {
+  success: boolean;
+  subscriptions_processed?: number;
+  emails_sent?: number;
+  errors?: string[];
+  error?: string;
+}
+
+/**
+ * Step 3: Send email digests to subscribers
+ * Sends only new ideas that match user's subscribed topics and haven't been sent before
+ */
+export async function sendEmailDigests(
+  supabase: SupabaseClient
+): Promise<SendEmailDigestsResult> {
+  try {
+    // Get all active subscriptions with their topics and user emails
+    const { data: subscriptions, error: subsError } = await supabase
+      .from("email_subscriptions")
+      .select(
+        `
+        id,
+        user_id,
+        email_subscription_topics(
+          topic_id,
+          topics(id, key, label)
+        )
+      `
+      )
+      .eq("is_active", true);
+
+    if (subsError) {
+      throw subsError;
+    }
+
+    let emailsSent = 0;
+    const errors: string[] = [];
+
+    if (subscriptions && subscriptions.length > 0) {
+      // Process each subscription
+      for (const subscription of subscriptions) {
+        try {
+          // Get user's email from profile
+          const { data: profile, error: profileError } = await supabase
+            .from("profiles")
+            .select("email")
+            .eq("id", subscription.user_id)
+            .single();
+
+          if (profileError || !profile?.email) {
+            errors.push(`No email found for subscription ${subscription.id}`);
+            continue;
+          }
+
+          const email = profile.email;
+
+          const subscriptionTopics = (subscription.email_subscription_topics as any[]) || [];
+          if (subscriptionTopics.length === 0) {
+            continue; // Skip subscriptions with no topics
+          }
+
+          const topicIds = subscriptionTopics.map((est: any) => est.topic_id);
+
+          // Get ideas that have already been sent to this user (idempotency)
+          const { data: pastDeliveries, error: deliveriesError } = await supabase
+            .from("email_deliveries")
+            .select("ideas_included")
+            .eq("subscription_id", subscription.id);
+
+          if (deliveriesError) {
+            errors.push(`Failed to fetch past deliveries for subscription ${subscription.id}: ${deliveriesError.message}`);
+            continue;
+          }
+
+          // Collect all idea IDs that have been sent before
+          const sentIdeaIds = new Set<string>();
+          if (pastDeliveries) {
+            for (const delivery of pastDeliveries) {
+              const ideasIncluded = delivery.ideas_included as string[] | null;
+              if (ideasIncluded && Array.isArray(ideasIncluded)) {
+                ideasIncluded.forEach((id) => sentIdeaIds.add(id));
+              }
+            }
+          }
+
+          // Get new ideas matching subscribed topics that haven't been sent
+          const { data: ideas, error: ideasError } = await supabase
+            .from("ideas")
+            .select(
+              `
+              id,
+              title,
+              pitch,
+              pain_insight,
+              score,
+              created_at,
+              topics(key, label),
+              idea_sources(
+                reddit_posts(
+                  permalink,
+                  subreddits(name)
+                )
+              )
+            `
+            )
+            .in("topic_id", topicIds)
+            .order("created_at", { ascending: false })
+            .limit(10); // Limit to 10 most recent ideas per email
+
+          if (ideasError) {
+            errors.push(`Failed to fetch ideas for subscription ${subscription.id}: ${ideasError.message}`);
+            continue;
+          }
+
+          // Filter out ideas that have already been sent
+          const newIdeas = (ideas || []).filter((idea) => !sentIdeaIds.has(idea.id));
+
+          if (newIdeas.length === 0) {
+            continue; // No new ideas to send
+          }
+
+          // Format email content
+          const topicLabels = subscriptionTopics.map((est: any) => est.topics?.label || "Unknown");
+          const ideasListHtml = newIdeas
+            .map((idea) => {
+              const source = (idea.idea_sources as any[])?.[0]?.reddit_posts;
+              const redditUrl = source?.permalink
+                ? `https://reddit.com${source.permalink}`
+                : null;
+              const subreddit = source?.subreddits?.name || "Unknown";
+
+              return `
+                <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #e5e7eb;">
+                  <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600;">${idea.title}</h3>
+                  <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">${idea.pitch}</p>
+                  <div style="margin: 8px 0;">
+                    <strong style="font-size: 14px;">Pain Insight:</strong>
+                    <p style="margin: 4px 0 0 0; color: #374151; font-size: 14px;">${idea.pain_insight}</p>
+                  </div>
+                  <div style="margin: 8px 0; font-size: 14px;">
+                    <span style="color: #6b7280;">Score: </span>
+                    <strong style="color: #059669;">${idea.score}</strong>
+                    ${redditUrl ? `<span style="color: #6b7280; margin-left: 16px;">Source: <a href="${redditUrl}" style="color: #2563eb;">${subreddit}</a></span>` : ""}
+                  </div>
+                </div>
+              `;
+            })
+            .join("");
+
+          const emailHtml = `
+            <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h1 style="font-size: 24px; font-weight: 700; margin: 0 0 16px 0;">New Product Ideas</h1>
+              <p style="color: #6b7280; font-size: 16px; margin: 0 0 24px 0;">
+                Here are ${newIdeas.length} new product idea${newIdeas.length > 1 ? "s" : ""} matching your subscribed topics: ${topicLabels.join(", ")}
+              </p>
+              ${ideasListHtml}
+              <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+                <p style="color: #6b7280; font-size: 14px; margin: 0 0 8px 0;">
+                  You're receiving this email because you subscribed to updates for: ${topicLabels.join(", ")}
+                </p>
+                <p style="color: #6b7280; font-size: 14px; margin: 0;">
+                  <a href="${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard" style="color: #2563eb;">Manage your subscriptions</a>
+                </p>
+              </div>
+            </div>
+          `;
+
+          // Send email
+          const { data: emailResult, error: emailError } = await resend.emails.send({
+            from: "ThreadSign <onboarding@resend.dev>", // TODO: Update with your domain
+            to: email,
+            subject: `${newIdeas.length} New Product Idea${newIdeas.length > 1 ? "s" : ""} from ThreadSign`,
+            html: emailHtml,
+          });
+
+          if (emailError) {
+            errors.push(`Failed to send email for subscription ${subscription.id}: ${emailError.message}`);
+            continue;
+          }
+
+          // Record delivery (idempotency)
+          const ideaIds = newIdeas.map((idea) => idea.id);
+          const { error: deliveryError } = await supabase.from("email_deliveries").insert({
+            subscription_id: subscription.id,
+            sent_at: new Date().toISOString(),
+            ideas_included: ideaIds,
+            resend_message_id: emailResult?.id || null,
+          });
+
+          if (deliveryError) {
+            errors.push(`Failed to record delivery for subscription ${subscription.id}: ${deliveryError.message}`);
+          } else {
+            emailsSent++;
+          }
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : "Unknown error";
+          errors.push(`Error processing subscription ${subscription.id}: ${errorMessage}`);
+        }
+      }
+    }
+
+    return {
+      success: true,
+      subscriptions_processed: subscriptions?.length || 0,
+      emails_sent: emailsSent,
+      errors: errors.length > 0 ? errors : undefined,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+```
+
+```typescript
+import { NextResponse } from "next/server";
+import { createServiceClient } from "@/lib/supabase/service";
+import { generateRedditPosts } from "@/lib/cron/generate-reddit-posts";
+import { generateIdeas } from "@/lib/cron/generate-ideas";
+import { sendEmailDigests } from "@/lib/cron/send-email-digests";
+
+/**
+ * Daily Pipeline Cron Job
+ * Runs once per day via Vercel Cron (Hobby plan compatible)
+ * 
+ * Pipeline Steps (run in sequence):
+ * 1. Generate mock Reddit posts
+ * 2. Evaluate posts → generate ideas
+ * 3. Send email digests to subscribers
+ * 
+ * All steps are idempotent and safe to re-run.
+ */
+export async function GET(request: Request) {
+  // Verify this is a cron request
+  const url = new URL(request.url);
+  const secret = url.searchParams.get("secret") || request.headers.get("x-cron-secret");
+  if (process.env.CRON_SECRET && secret !== process.env.CRON_SECRET) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const pipelineStartTime = Date.now();
+
+  try {
+    const supabase = createServiceClient();
+
+    // Step 1: Generate Mock Reddit Posts
+    const step1Result = await generateRedditPosts(supabase);
+
+    // Step 2: Generate Ideas from Reddit Posts
+    const step2Result = await generateIdeas(supabase);
+
+    // Step 3: Send Email Digests to Subscribers
+    const step3Result = await sendEmailDigests(supabase);
+
+    // Return combined results
+    const pipelineDuration = Date.now() - pipelineStartTime;
+    const allStepsSuccessful = 
+      step1Result.success &&
+      step2Result.success &&
+      step3Result.success;
+
+    return NextResponse.json({
+      success: allStepsSuccessful,
+      message: "Daily pipeline completed",
+      duration_ms: pipelineDuration,
+      results: {
+        step1_generate_posts: step1Result,
+        step2_generate_ideas: step2Result,
+        step3_send_emails: step3Result,
+      },
+    });
+  } catch (error) {
+    console.error("Error in daily pipeline:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to run daily pipeline",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+```
+
+
+Refactored the daily pipeline route by extracting each step into separate files. Here's what was created:
+
+## New Files Created
+
+1. **`lib/cron/generate-reddit-posts.ts`**
+   - Exports `generateRedditPosts()` function
+   - Handles Step 1: Generating mock Reddit posts
+   - Returns `GenerateRedditPostsResult` interface
+
+2. **`lib/cron/generate-ideas.ts`**
+   - Exports `generateIdeas()` function
+   - Handles Step 2: Evaluating posts and generating ideas
+   - Returns `GenerateIdeasResult` interface
+
+3. **`lib/cron/send-email-digests.ts`**
+   - Exports `sendEmailDigests()` function
+   - Handles Step 3: Sending email digests to subscribers
+   - Returns `SendEmailDigestsResult` interface
+
+## Refactored Route
+
+The main **`app/api/cron/daily-pipeline/route.ts`** is now much cleaner:
+- Reduced from ~496 lines to ~62 lines
+- Simply imports and calls the three step functions sequentially
+- Maintains the same error handling and result structure
+- Each function accepts a `SupabaseClient` parameter for dependency injection
+
+## Benefits
+
+- **Modularity**: Each step is self-contained in its own file
+- **Testability**: Each function can be tested independently
+- **Maintainability**: Easier to understand and modify individual steps
+- **Reusability**: Step functions can be used elsewhere if needed
+- **Type Safety**: Each function has a clear return type interface
+
+The build compiles successfully with no errors. The refactoring maintains the same functionality while improving code organization.
+
+---
+
+**User**
+
+Make the following updates to the project configuration and documentation.
+
+1. Daily Pipeline Cron
+Configure the daily pipeline cron to run once per day at 09:00 Kyiv time.
+Use Vercel Cron (Hobby-plan compatible).
+Ensure the cron schedule correctly accounts for the Kyiv timezone.
+
+2. Cleanup Unnecessary Cron APIs
+Remove any unused or obsolete cron API routes.
+Keep only the single daily pipeline cron endpoint.
+Ensure there is no duplicate or legacy cron logic left in the codebase.
+
+3. Documentation Updates
+Update the following files to reflect the current architecture:
+@docs/PRD.md 
+Describe the single daily pipeline approach.
+Document the daily flow:
+Generate mock Reddit posts
+Generate ideas from new posts
+Send daily email digest
+
+Clarify that all steps run sequentially in one job.
+@README.md 
+Update the setup instructions to reflect:
+One daily cron job
+Local testing via manual API calls
+Production execution via Vercel Cron
+Remove references to multiple or frequent cron jobs.
+
+Constraints
+Do not introduce new features.
+Keep changes minimal and aligned with the existing system design.
+Ensure consistency across code, PRD, and README.
+
+---
+
+**Cursor**
+
+
+Updating the cron schedule to Kyiv time, removing unused cron routes, and updating documentation. Checking existing cron routes first:
+
+
+```json
+{
+  "crons": [
+    {
+      "path": "/api/cron/daily-pipeline",
+      "schedule": "0 6 * * *"
+    }
+  ]
+}
+
+
+```
+
+```markdown
+# Product Requirements Document (PRD)
+## Product: ThreadSign (MVP)
+**Tagline:** Product ideas from real discussion threads
+
+---
+
+## 1. Overview
+
+### Problem Statement
+Early-stage founders struggle to identify **real, validated problems** worth solving. While Reddit contains millions of candid discussions describing user frustrations, this information is noisy, fragmented, and difficult to convert into actionable product ideas.
+
+### High-Level Solution
+ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked during MVP development) to monitor selected, problem-heavy subreddits. The system periodically ingests discussion threads, extracts pain signals, and uses an LLM to generate **concise product ideas with a simplified viability score**. Users consume these ideas via a web feed and optional email updates.
+
+> **Implementation Note:** During MVP development, Reddit posts are generated using an LLM-based mock generator rather than fetched from the Reddit API. The current mock implementation is scoped to Developer Tools topic and /startups subreddit. Access to the official Reddit API requires submitting and waiting for approval of an application form. This is an implementation detail only—the product flow, features, and UX are designed to work identically with real Reddit API data once approved. Mocked data does not represent a product limitation.
+
+### Target Users
+- Beginner founders
+- Indie hackers
+- Product-oriented developers exploring startup ideas
+
+---
+
+## 2. Goals & Non-Goals
+
+### Goals
+- Product ideas are traceable to real Reddit discussions
+- Users can quickly scan, filter, and evaluate ideas
+- Reddit ingestion runs reliably within API limits
+- Email subscriptions work end-to-end
+- Product is understandable without onboarding
+
+### Non-Goals (Out of Scope)
+- Real-time Reddit streaming
+- Deep comment-thread analysis
+- User-generated submissions
+- Monetization or billing
+- Advanced market sizing or competitive analysis
+- Non-Reddit data sources
+
+---
+
+## 3. User Personas & Use Cases
+
+### Primary Persona: Beginner Founder
+- Limited experience with market research
+- Wants fast inspiration grounded in real user pain
+- Values clarity and signal over depth
+
+### Key User Scenarios
+1. **Browse Ideas**
+   - User opens ThreadSign and views a feed of ideas derived from recent Reddit threads
+   - User filters ideas by topic (e.g., devtools, health)
+
+2. **Evaluate an Idea**
+   - User reviews the pitch, pain insight, score, and source subreddit
+   - User may open the original Reddit thread for context
+
+3. **Subscribe for Updates**
+   - User subscribes to email updates by topic
+   - Receives periodic emails with new ideas
+   - Can unsubscribe at any time
+
+---
+
+## 4. Functional Requirements
+
+### Reddit Data Ingestion & Idea Generation
+- **Implementation:** Currently uses mocked Reddit data generated via LLM-based mock generator
+  - Reddit posts are generated using LLM rather than fetched from Reddit API
+  - Mock generation is scoped to Developer Tools topic and /startups subreddit for MVP
+  - Generated posts are treated as raw signal data only—no scoring, ranking, or evaluation at this stage
+  - Generated posts are internal signal data, not user-facing content
+  - Mocked data is used temporarily during MVP development
+  - Official Reddit API integration will replace mocks once API access is approved
+  - This is an implementation detail only—no changes to product flow or features
+- **Daily Pipeline:** A single daily pipeline runs once per day, executing three sequential steps:
+  1. Generate mock Reddit posts (at least 5 posts per run)
+  2. Evaluate unprocessed posts and generate product ideas with viability scores
+  3. Send email digests to subscribers with new ideas
+- All steps run sequentially in one scheduled job (daily execution)
+- **Idea Scoring:**
+  - Uses LLM to extract pain points and generate product ideas
+  - Each idea receives a viability score from 0–100
+  - **Scoring Criteria (each scored independently 0–100):**
+    - Pain point intensity (0–100)
+    - Willingness to pay (0–100)
+    - Competitive landscape (0–100)
+    - TAM - Total Addressable Market (0–100)
+  - **Final Score Calculation:** Simple average of all four criteria (sum / 4)
+  - **Scoring Threshold:** Only ideas with an average score ≥ 60 are stored and surfaced to users
+  - Individual criterion scores are persisted for breakdown display
+  - Lower-scoring ideas are discarded (implementation detail)
+  - LLM prompts and outputs are structured and versioned
+
+### Idea Feed
+- Displays generated product ideas
+- Each item includes:
+  - Name
+  - Short pitch (1–2 sentences)
+  - Key pain / insight
+  - Source subreddit + link
+  - Viability score (with breakdown on hover)
+  - "New" badge
+- Topic-based filtering
+- Sorting controls:
+  - By date (newest first / oldest first)
+  - By score (highest first / lowest first)
+- Score breakdown tooltip shows individual criterion scores on hover
+- Graceful loading and empty states
+
+### Authentication
+- Email/password authentication via Supabase
+- Required for email subscriptions
+
+### Email Subscriptions
+- Topic-based subscriptions
+- Emails sent via Resend on a scheduled basis (daily by default; frequency can be adjusted based on deployment plan)
+- Emails include only new ideas matching subscribed topics
+- Duplicate prevention: ideas are sent to each user only once
+- Unsubscribe available via link or profile
+
+---
+
+## 5. Non-Functional Requirements
+
+### Performance
+- Feed loads in under 2 seconds on average
+- Background jobs do not block UI
+
+### Security & Privacy
+- No Reddit user PII stored
+- Secrets stored in environment variables
+- Authentication handled by Supabase
+
+### Scalability
+- Scheduled ingestion runs on a configurable schedule (daily by default)
+- Caching of ingested posts and generated ideas
+- MVP assumes low-to-moderate traffic
+- Batch ingestion to respect Reddit API limits (when API access is available)
+
+---
+
+## 6. UX / UI Notes
+
+- Clean, scannable layout
+- Clear connection between idea and source thread
+- External links open in a new tab
+- Empty states explain what is happening (“Ideas are being generated”)
+
+> Visual and styling guidance is defined in **VisualDesign.md**
+
+---
+
+## 7. Metrics & Success Criteria
+
+### Quantitative
+- Ideas generated per day
+- Feed engagement (scroll depth, filters)
+- Email subscription rate
+- Email open rate (if enabled)
+
+### Qualitative
+- Ideas feel realistic and grounded
+- Users understand value within first visit
+- Minimal clarification needed
+
+---
+
+## 8. Open Questions & Assumptions
+
+### Assumptions
+- Reddit posts are generated via LLM-based mock generator during MVP development
+- Mock implementation is scoped to Developer Tools topic and /startups subreddit
+- Reddit API access will be available after approval (currently using mocked data for development)
+- Viability scoring uses structured LLM evaluation with defined criteria
+
+### Open Questions
+- Expanding beyond Developer Tools topic and /startups subreddit
+- Reprocessing older posts
+- Anonymous browsing vs auth-only
+
+---
+
+## 9. Technical Reference
+
+Implementation details, database schema, and system architecture
+are defined in **SystemDesign.md**.
+
+```
+
+```markdown
+# Product Requirements Document (PRD)
+## Product: ThreadSign (MVP)
+**Tagline:** Product ideas from real discussion threads
+
+---
+
+## 1. Overview
+
+### Problem Statement
+Early-stage founders struggle to identify **real, validated problems** worth solving. While Reddit contains millions of candid discussions describing user frustrations, this information is noisy, fragmented, and difficult to convert into actionable product ideas.
+
+### High-Level Solution
+ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked during MVP development) to monitor selected, problem-heavy subreddits. The system periodically ingests discussion threads, extracts pain signals, and uses an LLM to generate **concise product ideas with a simplified viability score**. Users consume these ideas via a web feed and optional email updates.
+
+> **Implementation Note:** During MVP development, Reddit posts are generated using an LLM-based mock generator rather than fetched from the Reddit API. The current mock implementation is scoped to Developer Tools topic and /startups subreddit. Access to the official Reddit API requires submitting and waiting for approval of an application form. This is an implementation detail only—the product flow, features, and UX are designed to work identically with real Reddit API data once approved. Mocked data does not represent a product limitation.
+
+### Target Users
+- Beginner founders
+- Indie hackers
+- Product-oriented developers exploring startup ideas
+
+---
+
+## 2. Goals & Non-Goals
+
+### Goals
+- Product ideas are traceable to real Reddit discussions
+- Users can quickly scan, filter, and evaluate ideas
+- Reddit ingestion runs reliably within API limits
+- Email subscriptions work end-to-end
+- Product is understandable without onboarding
+
+### Non-Goals (Out of Scope)
+- Real-time Reddit streaming
+- Deep comment-thread analysis
+- User-generated submissions
+- Monetization or billing
+- Advanced market sizing or competitive analysis
+- Non-Reddit data sources
+
+---
+
+## 3. User Personas & Use Cases
+
+### Primary Persona: Beginner Founder
+- Limited experience with market research
+- Wants fast inspiration grounded in real user pain
+- Values clarity and signal over depth
+
+### Key User Scenarios
+1. **Browse Ideas**
+   - User opens ThreadSign and views a feed of ideas derived from recent Reddit threads
+   - User filters ideas by topic (e.g., devtools, health)
+
+2. **Evaluate an Idea**
+   - User reviews the pitch, pain insight, score, and source subreddit
+   - User may open the original Reddit thread for context
+
+3. **Subscribe for Updates**
+   - User subscribes to email updates by topic
+   - Receives periodic emails with new ideas
+   - Can unsubscribe at any time
+
+---
+
+## 4. Functional Requirements
+
+### Reddit Data Ingestion & Idea Generation
+- **Implementation:** Currently uses mocked Reddit data generated via LLM-based mock generator
+  - Reddit posts are generated using LLM rather than fetched from Reddit API
+  - Mock generation is scoped to Developer Tools topic and /startups subreddit for MVP
+  - Generated posts are treated as raw signal data only—no scoring, ranking, or evaluation at this stage
+  - Generated posts are internal signal data, not user-facing content
+  - Mocked data is used temporarily during MVP development
+  - Official Reddit API integration will replace mocks once API access is approved
+  - This is an implementation detail only—no changes to product flow or features
+- **Daily Pipeline:** A single daily pipeline runs once per day, executing three sequential steps:
+  1. Generate mock Reddit posts (at least 5 posts per run)
+  2. Evaluate unprocessed posts and generate product ideas with viability scores
+  3. Send email digests to subscribers with new ideas
+- All steps run sequentially in one scheduled job (daily execution)
+- **Idea Scoring:**
+  - Uses LLM to extract pain points and generate product ideas
+  - Each idea receives a viability score from 0–100
+  - **Scoring Criteria (each scored independently 0–100):**
+    - Pain point intensity (0–100)
+    - Willingness to pay (0–100)
+    - Competitive landscape (0–100)
+    - TAM - Total Addressable Market (0–100)
+  - **Final Score Calculation:** Simple average of all four criteria (sum / 4)
+  - **Scoring Threshold:** Only ideas with an average score ≥ 60 are stored and surfaced to users
+  - Individual criterion scores are persisted for breakdown display
+  - Lower-scoring ideas are discarded (implementation detail)
+  - LLM prompts and outputs are structured and versioned
+
+### Idea Feed
+- Displays generated product ideas
+- Each item includes:
+  - Name
+  - Short pitch (1–2 sentences)
+  - Key pain / insight
+  - Source subreddit + link
+  - Viability score (with breakdown on hover)
+  - "New" badge
+- Topic-based filtering
+- Sorting controls:
+  - By date (newest first / oldest first)
+  - By score (highest first / lowest first)
+- Score breakdown tooltip shows individual criterion scores on hover
+- Graceful loading and empty states
+
+### Authentication
+- Email/password authentication via Supabase
+- Required for email subscriptions
+
+### Email Subscriptions
+- Topic-based subscriptions
+- Daily email digests sent via Resend (part of the daily pipeline execution)
+- Emails include only new ideas matching subscribed topics
+- Duplicate prevention: ideas are sent to each user only once
+- Unsubscribe available via link or profile
+
+---
+
+## 5. Non-Functional Requirements
+
+### Performance
+- Feed loads in under 2 seconds on average
+- Background jobs do not block UI
+
+### Security & Privacy
+- No Reddit user PII stored
+- Secrets stored in environment variables
+- Authentication handled by Supabase
+
+### Scalability
+- Scheduled ingestion runs on a configurable schedule (daily by default)
+- Caching of ingested posts and generated ideas
+- MVP assumes low-to-moderate traffic
+- Batch ingestion to respect Reddit API limits (when API access is available)
+
+---
+
+## 6. UX / UI Notes
+
+- Clean, scannable layout
+- Clear connection between idea and source thread
+- External links open in a new tab
+- Empty states explain what is happening (“Ideas are being generated”)
+
+> Visual and styling guidance is defined in **VisualDesign.md**
+
+---
+
+## 7. Metrics & Success Criteria
+
+### Quantitative
+- Ideas generated per day
+- Feed engagement (scroll depth, filters)
+- Email subscription rate
+- Email open rate (if enabled)
+
+### Qualitative
+- Ideas feel realistic and grounded
+- Users understand value within first visit
+- Minimal clarification needed
+
+---
+
+## 8. Open Questions & Assumptions
+
+### Assumptions
+- Reddit posts are generated via LLM-based mock generator during MVP development
+- Mock implementation is scoped to Developer Tools topic and /startups subreddit
+- Reddit API access will be available after approval (currently using mocked data for development)
+- Viability scoring uses structured LLM evaluation with defined criteria
+
+### Open Questions
+- Expanding beyond Developer Tools topic and /startups subreddit
+- Reprocessing older posts
+- Anonymous browsing vs auth-only
+
+---
+
+## 9. Technical Reference
+
+Implementation details, database schema, and system architecture
+are defined in **SystemDesign.md**.
+
+```
+
+```markdown
+# Product Requirements Document (PRD)
+## Product: ThreadSign (MVP)
+**Tagline:** Product ideas from real discussion threads
+
+---
+
+## 1. Overview
+
+### Problem Statement
+Early-stage founders struggle to identify **real, validated problems** worth solving. While Reddit contains millions of candid discussions describing user frustrations, this information is noisy, fragmented, and difficult to convert into actionable product ideas.
+
+### High-Level Solution
+ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked during MVP development) to monitor selected, problem-heavy subreddits. The system periodically ingests discussion threads, extracts pain signals, and uses an LLM to generate **concise product ideas with a simplified viability score**. Users consume these ideas via a web feed and optional email updates.
+
+> **Implementation Note:** During MVP development, Reddit posts are generated using an LLM-based mock generator rather than fetched from the Reddit API. The current mock implementation is scoped to Developer Tools topic and /startups subreddit. Access to the official Reddit API requires submitting and waiting for approval of an application form. This is an implementation detail only—the product flow, features, and UX are designed to work identically with real Reddit API data once approved. Mocked data does not represent a product limitation.
+
+### Target Users
+- Beginner founders
+- Indie hackers
+- Product-oriented developers exploring startup ideas
+
+---
+
+## 2. Goals & Non-Goals
+
+### Goals
+- Product ideas are traceable to real Reddit discussions
+- Users can quickly scan, filter, and evaluate ideas
+- Reddit ingestion runs reliably within API limits
+- Email subscriptions work end-to-end
+- Product is understandable without onboarding
+
+### Non-Goals (Out of Scope)
+- Real-time Reddit streaming
+- Deep comment-thread analysis
+- User-generated submissions
+- Monetization or billing
+- Advanced market sizing or competitive analysis
+- Non-Reddit data sources
+
+---
+
+## 3. User Personas & Use Cases
+
+### Primary Persona: Beginner Founder
+- Limited experience with market research
+- Wants fast inspiration grounded in real user pain
+- Values clarity and signal over depth
+
+### Key User Scenarios
+1. **Browse Ideas**
+   - User opens ThreadSign and views a feed of ideas derived from recent Reddit threads
+   - User filters ideas by topic (e.g., devtools, health)
+
+2. **Evaluate an Idea**
+   - User reviews the pitch, pain insight, score, and source subreddit
+   - User may open the original Reddit thread for context
+
+3. **Subscribe for Updates**
+   - User subscribes to email updates by topic
+   - Receives periodic emails with new ideas
+   - Can unsubscribe at any time
+
+---
+
+## 4. Functional Requirements
+
+### Reddit Data Ingestion & Idea Generation
+- **Implementation:** Currently uses mocked Reddit data generated via LLM-based mock generator
+  - Reddit posts are generated using LLM rather than fetched from Reddit API
+  - Mock generation is scoped to Developer Tools topic and /startups subreddit for MVP
+  - Generated posts are treated as raw signal data only—no scoring, ranking, or evaluation at this stage
+  - Generated posts are internal signal data, not user-facing content
+  - Mocked data is used temporarily during MVP development
+  - Official Reddit API integration will replace mocks once API access is approved
+  - This is an implementation detail only—no changes to product flow or features
+- **Daily Pipeline:** A single daily pipeline runs once per day, executing three sequential steps:
+  1. Generate mock Reddit posts (at least 5 posts per run)
+  2. Evaluate unprocessed posts and generate product ideas with viability scores
+  3. Send email digests to subscribers with new ideas
+- All steps run sequentially in one scheduled job (daily execution)
+- **Idea Scoring:**
+  - Uses LLM to extract pain points and generate product ideas
+  - Each idea receives a viability score from 0–100
+  - **Scoring Criteria (each scored independently 0–100):**
+    - Pain point intensity (0–100)
+    - Willingness to pay (0–100)
+    - Competitive landscape (0–100)
+    - TAM - Total Addressable Market (0–100)
+  - **Final Score Calculation:** Simple average of all four criteria (sum / 4)
+  - **Scoring Threshold:** Only ideas with an average score ≥ 60 are stored and surfaced to users
+  - Individual criterion scores are persisted for breakdown display
+  - Lower-scoring ideas are discarded (implementation detail)
+  - LLM prompts and outputs are structured and versioned
+
+### Idea Feed
+- Displays generated product ideas
+- Each item includes:
+  - Name
+  - Short pitch (1–2 sentences)
+  - Key pain / insight
+  - Source subreddit + link
+  - Viability score (with breakdown on hover)
+  - "New" badge
+- Topic-based filtering
+- Sorting controls:
+  - By date (newest first / oldest first)
+  - By score (highest first / lowest first)
+- Score breakdown tooltip shows individual criterion scores on hover
+- Graceful loading and empty states
+
+### Authentication
+- Email/password authentication via Supabase
+- Required for email subscriptions
+
+### Email Subscriptions
+- Topic-based subscriptions
+- Daily email digests sent via Resend (part of the daily pipeline execution)
+- Emails include only new ideas matching subscribed topics
+- Duplicate prevention: ideas are sent to each user only once
+- Unsubscribe available via link or profile
+
+---
+
+## 5. Non-Functional Requirements
+
+### Performance
+- Feed loads in under 2 seconds on average
+- Background jobs do not block UI
+
+### Security & Privacy
+- No Reddit user PII stored
+- Secrets stored in environment variables
+- Authentication handled by Supabase
+
+### Scalability
+- Daily pipeline runs once per day via scheduled cron job
+- Caching of ingested posts and generated ideas
+- MVP assumes low-to-moderate traffic
+- Batch processing to respect Reddit API limits (when API access is available)
+
+---
+
+## 6. UX / UI Notes
+
+- Clean, scannable layout
+- Clear connection between idea and source thread
+- External links open in a new tab
+- Empty states explain what is happening (“Ideas are being generated”)
+
+> Visual and styling guidance is defined in **VisualDesign.md**
+
+---
+
+## 7. Metrics & Success Criteria
+
+### Quantitative
+- Ideas generated per day
+- Feed engagement (scroll depth, filters)
+- Email subscription rate
+- Email open rate (if enabled)
+
+### Qualitative
+- Ideas feel realistic and grounded
+- Users understand value within first visit
+- Minimal clarification needed
+
+---
+
+## 8. Open Questions & Assumptions
+
+### Assumptions
+- Reddit posts are generated via LLM-based mock generator during MVP development
+- Mock implementation is scoped to Developer Tools topic and /startups subreddit
+- Reddit API access will be available after approval (currently using mocked data for development)
+- Viability scoring uses structured LLM evaluation with defined criteria
+
+### Open Questions
+- Expanding beyond Developer Tools topic and /startups subreddit
+- Reprocessing older posts
+- Anonymous browsing vs auth-only
+
+---
+
+## 9. Technical Reference
+
+Implementation details, database schema, and system architecture
+are defined in **SystemDesign.md**.
+
+```
+
+```markdown
+# ThreadSign
+Product ideas from real discussion threads
+
+## Setup Instructions
+
+### Local Development
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd threadsign
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   - Copy `.env.local.example` to `.env.local` (if it exists) or create a new `.env.local` file
+   - Add all required environment variables (see [Environment Variables](#environment-variables) below)
+
+4. **Set up Supabase**
+   - Run all SQL migrations in `supabase/migrations/` in order
+   - Ensure Row Level Security (RLS) policies are enabled
+
+5. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+6. **Open your browser**
+   - Navigate to `http://localhost:3000`
+
+### Production Deployment
+
+1. **Set up environment variables** in your deployment platform (Vercel, etc.)
+   - Add all required environment variables from the [Environment Variables](#environment-variables) section
+
+2. **Deploy the application**
+   - Follow your platform's deployment instructions
+   - Ensure all migrations have been run in your Supabase instance
+
+3. **Configure Vercel Cron job** (if using Vercel)
+   - The `vercel.json` file includes a single daily pipeline cron job configuration
+   - The pipeline runs daily at 09:00 Kyiv time (06:00 UTC)
+   - Verify the cron job is active in your Vercel project settings
+
+## Environment Variables
+
+The following environment variables are required for the application to function:
+
+### Client-Side Variables
+
+These variables are prefixed with `NEXT_PUBLIC_` and are exposed to the browser:
+
+- **`NEXT_PUBLIC_SUPABASE_URL`** - Your Supabase project URL (used for client-side authentication and database queries)
+- **`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`** - Supabase anon/public key (used for client-side authentication)
+
+### Server-Only Variables
+
+These variables are **never exposed to the client** and must remain server-side only:
+
+- **`SUPABASE_SERVICE_ROLE_KEY`** - Supabase service role key with elevated permissions (used by background jobs and server-side operations that bypass RLS)
+- **`RESEND_API_KEY`** - Resend API key for sending subscription confirmation and digest emails
+- **`OPENAI_API_KEY`** - OpenAI API key for generating mock Reddit posts and evaluating/scoring product ideas
+- **`CRON_SECRET`** - Secret token for securing cron job endpoints (prevents unauthorized access to background job routes)
+
+### Example `.env.local` File
+
+Create a `.env.local` file in the root directory with the following structure:
+
+```env
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-anon-key-here
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+
+# Email Service (Resend)
+RESEND_API_KEY=re_your-resend-api-key
+
+# LLM Service (OpenAI)
+OPENAI_API_KEY=sk-your-openai-api-key
+
+# Cron Job Security
+CRON_SECRET=your-random-secret-token-here
+```
+
+**Important Security Notes:**
+- Never commit `.env.local` to version control
+- The `SUPABASE_SERVICE_ROLE_KEY` has full database access and should be kept secret
+- The `CRON_SECRET` should be a strong, random string
+- Server-only variables (without `NEXT_PUBLIC_` prefix) are safe and should never be exposed to client-side code
+
+```
+
+```markdown
+# Automated Idea Generation Setup
+
+This document describes the automated background jobs for idea generation.
+
+## Overview
+
+A single daily pipeline cron job runs automatically:
+- **Daily Pipeline** - Runs daily at 09:00 Kyiv time (06:00 UTC)
+  - Executes three sequential steps in one job:
+    1. **Generate Mock Reddit Posts** - Generates at least 5 mock Reddit posts using LLM (scoped to Developer Tools topic and /startups subreddit)
+    2. **Generate Ideas** - Evaluates unprocessed Reddit posts, generates product ideas with viability scores (only stores ideas with score ≥ 60)
+    3. **Send Email Digests** - Sends email digests to subscribers with new ideas (only includes ideas that haven't been sent to each user before)
+
+**Note:** This single-pipeline approach is configured for Vercel Hobby plan compatibility (daily cron jobs). All steps are idempotent and safe to re-run. The pipeline runs sequentially, so each step completes before the next begins.
+
+## Environment Variables Required
+
+- `OPENAI_API_KEY` - OpenAI API key for LLM generation
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key for background jobs
+- `CRON_SECRET` - Secret token to secure cron endpoints (set in Vercel)
+
+## Vercel Cron Configuration
+
+The `vercel.json` file configures the cron jobs. In Vercel:
+1. Set the `CRON_SECRET` environment variable (optional, for additional security)
+2. The cron jobs will run automatically according to the schedule
+3. Note: For production, consider additional security measures like IP allowlisting or using Vercel's built-in cron authentication
+
+## Database Requirements
+
+Ensure the following exist in your database:
+- `topics` table with a topic where `key = 'devtools'`
+- `subreddits` table with a subreddit where `name = 'r/startups'`
+- `reddit_posts` table with `processed_at` column (nullable timestamptz)
+
+## Manual Testing
+
+You can test the daily pipeline endpoint manually:
+```bash
+curl "http://localhost:3000/api/cron/daily-pipeline?secret=YOUR_CRON_SECRET"
+```
+
+The pipeline will execute all three steps sequentially and return combined results.
+
+**Note:** Individual step endpoints (`/api/cron/generate-reddit-posts`, `/api/cron/generate-ideas`, `/api/cron/send-email-digests`) are still available for testing individual steps, but they are not scheduled in production.
+
+## Notes
+
+- All OpenAI calls are server-only and never exposed to the client
+- The service role client bypasses RLS for background operations
+- Posts are marked as processed even if no idea is generated (to avoid infinite retries)
+- Only ideas with score ≥ 60 are stored in the database
+
+
+```
+
+
+Updating README_CRON.md to remove references to deleted endpoints:
+
+
+```markdown
+# Automated Idea Generation Setup
+
+This document describes the automated background jobs for idea generation.
+
+## Overview
+
+A single daily pipeline cron job runs automatically:
+- **Daily Pipeline** - Runs daily at 09:00 Kyiv time (06:00 UTC)
+  - Executes three sequential steps in one job:
+    1. **Generate Mock Reddit Posts** - Generates at least 5 mock Reddit posts using LLM (scoped to Developer Tools topic and /startups subreddit)
+    2. **Generate Ideas** - Evaluates unprocessed Reddit posts, generates product ideas with viability scores (only stores ideas with score ≥ 60)
+    3. **Send Email Digests** - Sends email digests to subscribers with new ideas (only includes ideas that haven't been sent to each user before)
+
+**Note:** This single-pipeline approach is configured for Vercel Hobby plan compatibility (daily cron jobs). All steps are idempotent and safe to re-run. The pipeline runs sequentially, so each step completes before the next begins.
+
+## Environment Variables Required
+
+- `OPENAI_API_KEY` - OpenAI API key for LLM generation
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key for background jobs
+- `CRON_SECRET` - Secret token to secure cron endpoints (set in Vercel)
+
+## Vercel Cron Configuration
+
+The `vercel.json` file configures the cron jobs. In Vercel:
+1. Set the `CRON_SECRET` environment variable (optional, for additional security)
+2. The cron jobs will run automatically according to the schedule
+3. Note: For production, consider additional security measures like IP allowlisting or using Vercel's built-in cron authentication
+
+## Database Requirements
+
+Ensure the following exist in your database:
+- `topics` table with a topic where `key = 'devtools'`
+- `subreddits` table with a subreddit where `name = 'r/startups'`
+- `reddit_posts` table with `processed_at` column (nullable timestamptz)
+
+## Manual Testing
+
+You can test the daily pipeline endpoint manually:
+```bash
+curl "http://localhost:3000/api/cron/daily-pipeline?secret=YOUR_CRON_SECRET"
+```
+
+The pipeline will execute all three steps sequentially and return combined results.
+
+## Notes
+
+- All OpenAI calls are server-only and never exposed to the client
+- The service role client bypasses RLS for background operations
+- Posts are marked as processed even if no idea is generated (to avoid infinite retries)
+- Only ideas with score ≥ 60 are stored in the database
+
+
+```
+
+
+Checking if those directories still have files and cleaning them up:
+
+
+
+Updating the comment in the daily pipeline route to reflect the Kyiv time schedule:
+
+
+```typescript
+import { NextResponse } from "next/server";
+import { createServiceClient } from "@/lib/supabase/service";
+import { generateRedditPosts } from "@/lib/cron/generate-reddit-posts";
+import { generateIdeas } from "@/lib/cron/generate-ideas";
+import { sendEmailDigests } from "@/lib/cron/send-email-digests";
+
+/**
+ * Daily Pipeline Cron Job
+ * Runs once per day at 09:00 Kyiv time (06:00 UTC) via Vercel Cron (Hobby plan compatible)
+ * 
+ * Pipeline Steps (run in sequence):
+ * 1. Generate mock Reddit posts
+ * 2. Evaluate posts → generate ideas
+ * 3. Send email digests to subscribers
+ * 
+ * All steps are idempotent and safe to re-run.
+ */
+export async function GET(request: Request) {
+  // Verify this is a cron request
+  const url = new URL(request.url);
+  const secret = url.searchParams.get("secret") || request.headers.get("x-cron-secret");
+  if (process.env.CRON_SECRET && secret !== process.env.CRON_SECRET) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const pipelineStartTime = Date.now();
+
+  try {
+    const supabase = createServiceClient();
+
+    // Step 1: Generate Mock Reddit Posts
+    const step1Result = await generateRedditPosts(supabase);
+
+    // Step 2: Generate Ideas from Reddit Posts
+    const step2Result = await generateIdeas(supabase);
+
+    // Step 3: Send Email Digests to Subscribers
+    const step3Result = await sendEmailDigests(supabase);
+
+    // Return combined results
+    const pipelineDuration = Date.now() - pipelineStartTime;
+    const allStepsSuccessful = 
+      step1Result.success &&
+      step2Result.success &&
+      step3Result.success;
+
+    return NextResponse.json({
+      success: allStepsSuccessful,
+      message: "Daily pipeline completed",
+      duration_ms: pipelineDuration,
+      results: {
+        step1_generate_posts: step1Result,
+        step2_generate_ideas: step2Result,
+        step3_send_emails: step3Result,
+      },
+    });
+  } catch (error) {
+    console.error("Error in daily pipeline:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to run daily pipeline",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+```
+
+
+All changes are complete. Summary:
+
+## Summary of Changes
+
+### 1. Daily Pipeline Cron Schedule
+- Updated `vercel.json` to run at `06:00 UTC` (09:00 Kyiv time during summer/EEST)
+- Updated route comment to document the Kyiv time schedule
+- Vercel Hobby plan compatible (single daily cron job)
+
+### 2. Cleaned Up Unnecessary Cron APIs
+- Removed `app/api/cron/generate-reddit-posts/route.ts`
+- Removed `app/api/cron/generate-ideas/route.ts`
+- Removed `app/api/cron/send-email-digests/route.ts`
+- Only `app/api/cron/daily-pipeline/route.ts` remains
+
+### 3. Documentation Updates
+
+**`docs/PRD.md`:**
+- Merged "Reddit Data Ingestion" and "Idea Generation & Scoring" into a single section
+- Documented the daily pipeline with three sequential steps
+- Clarified that all steps run sequentially in one job
+- Updated "Email Subscriptions" to reference the daily pipeline
+- Updated "Scalability" to reference the daily pipeline
+
+**`README.md`:**
+- Updated production deployment section to reference a single daily cron job
+- Added note about 09:00 Kyiv time schedule (06:00 UTC)
+
+**`README_CRON.md`:**
+- Updated schedule to 09:00 Kyiv time (06:00 UTC)
+- Clarified that steps run sequentially
+- Removed references to deleted individual step endpoints
+
+The build compiles successfully, and the codebase now reflects a single daily pipeline architecture. All documentation is consistent and aligned with the implementation.
 

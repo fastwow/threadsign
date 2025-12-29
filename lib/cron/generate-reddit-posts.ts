@@ -1,25 +1,22 @@
-import { NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/service";
+import { SupabaseClient } from "@supabase/supabase-js";
 import { generateMockRedditPost } from "@/lib/openai";
 
+export interface GenerateRedditPostsResult {
+  success: boolean;
+  posts_generated?: number;
+  posts_skipped?: number;
+  error?: string;
+}
+
 /**
- * Cron job: Generate mock Reddit posts
- * Runs every 5 minutes
+ * Step 1: Generate mock Reddit posts
+ * Generates at least 5 mock Reddit posts using LLM
  * Scope: Developer Tools topic, /startups subreddit
  */
-export async function GET(request: Request) {
-  // Verify this is a cron request
-  // Check for CRON_SECRET in query params or header (for manual testing)
-  // In production, consider additional security measures
-  const url = new URL(request.url);
-  const secret = url.searchParams.get("secret") || request.headers.get("x-cron-secret");
-  if (process.env.CRON_SECRET && secret !== process.env.CRON_SECRET) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+export async function generateRedditPosts(
+  supabase: SupabaseClient
+): Promise<GenerateRedditPostsResult> {
   try {
-    const supabase = createServiceClient();
-
     // Get Developer Tools topic
     const { data: topic, error: topicError } = await supabase
       .from("topics")
@@ -44,8 +41,8 @@ export async function GET(request: Request) {
 
     // Generate at least 5 mock Reddit posts using LLM
     const postsToGenerate = 5;
-    const generatedPosts = [];
-    const skippedPosts = [];
+    const generatedPosts: string[] = [];
+    const skippedPosts: string[] = [];
 
     for (let i = 0; i < postsToGenerate; i++) {
       try {
@@ -54,7 +51,7 @@ export async function GET(request: Request) {
           topic: topic.label,
         });
 
-        // Check if post with this reddit_post_id already exists
+        // Check if post with this reddit_post_id already exists (idempotency)
         const { data: existingPost } = await supabase
           .from("reddit_posts")
           .select("id")
@@ -75,10 +72,10 @@ export async function GET(request: Request) {
             title: mockPost.title,
             body: mockPost.body,
             permalink: mockPost.permalink,
-            score: mockPost.score, // Raw Reddit score for realism only
-            num_comments: mockPost.num_comments, // Raw comment count for realism only
+            score: mockPost.score,
+            num_comments: mockPost.num_comments,
             created_utc: new Date().toISOString(),
-            processed_at: null, // Will be set when processed by idea generation
+            processed_at: null,
           })
           .select()
           .single();
@@ -94,22 +91,16 @@ export async function GET(request: Request) {
       }
     }
 
-    return NextResponse.json({
+    return {
       success: true,
-      message: "Reddit posts generation completed",
       posts_generated: generatedPosts.length,
       posts_skipped: skippedPosts.length,
-      post_ids: generatedPosts,
-    });
+    };
   } catch (error) {
-    console.error("Error generating Reddit post:", error);
-    return NextResponse.json(
-      {
-        error: "Failed to generate Reddit post",
-        message: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 }
-    );
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
 }
 
