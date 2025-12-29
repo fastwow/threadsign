@@ -14,6 +14,7 @@ export const openai = new OpenAI({
 
 /**
  * Generate a mock Reddit post using LLM
+ * Returns raw signal data only - no scoring or evaluation
  */
 export async function generateMockRedditPost(params: {
   subreddit: string;
@@ -21,8 +22,8 @@ export async function generateMockRedditPost(params: {
 }): Promise<{
   title: string;
   body: string;
-  score: number;
-  num_comments: number;
+  score: number; // Raw Reddit upvote score for realism only
+  num_comments: number; // Raw comment count for realism only
   permalink: string;
   reddit_post_id: string;
 }> {
@@ -33,7 +34,8 @@ export async function generateMockRedditPost(params: {
         role: "system",
         content: `You are generating realistic Reddit discussion posts for a subreddit about ${params.topic}. 
         Generate a post that describes a real-world problem, frustration, or need that someone might post about.
-        The post should be authentic, detailed, and show genuine pain points that could inspire product ideas.`,
+        The post should be authentic, detailed, and show genuine pain points that could inspire product ideas.
+        Include realistic metadata (upvote score, comment count) for authenticity only - this is raw signal data.`,
       },
       {
         role: "user",
@@ -42,7 +44,7 @@ export async function generateMockRedditPost(params: {
         - A compelling title
         - A detailed post body (2-4 paragraphs) describing a problem, frustration, or need
         - Make it realistic and authentic
-        - Format the response as JSON with: title, body, score (integer 1-100), num_comments (integer 1-50), permalink (e.g., "/r/startups/comments/abc123/"), reddit_post_id (random alphanumeric string)`,
+        - Format the response as JSON with: title, body, score (integer 1-100, realistic upvote count), num_comments (integer 1-50, realistic comment count), permalink (e.g., "/r/startups/comments/abc123/"), reddit_post_id (random alphanumeric string)`,
       },
     ],
     response_format: { type: "json_object" },
@@ -69,12 +71,12 @@ export interface IdeaGenerationResult {
   title: string;
   pitch: string;
   pain_insight: string;
-  score: number;
+  score: number; // Average of all criteria (0-100)
   scoring_breakdown: {
-    pain_point_intensity: number;
-    willingness_to_pay: number;
-    competitive_landscape: number;
-    tam: number;
+    pain_point_intensity: number; // 0-100
+    willingness_to_pay: number; // 0-100
+    competitive_landscape: number; // 0-100
+    tam: number; // 0-100 (Total Addressable Market)
   };
 }
 
@@ -101,13 +103,14 @@ export async function generateIdeaFromPost(params: {
         1. A short, compelling product title
         2. A 1-2 sentence pitch describing the product
         3. A key pain insight extracted from the discussion
-        4. A viability score from 0-100 based on four criteria (each worth 25 points):
-           - Pain point intensity (0-25): How severe and urgent is the problem?
-           - Willingness to pay (0-25): How likely are users to pay for a solution?
-           - Competitive landscape (0-25): How crowded is the market? (Higher = less crowded)
-           - TAM (Total Addressable Market) (0-25): How large is the potential market?
+        4. A viability score from 0-100 based on four criteria (each scored 0-100 independently):
+           - Pain point intensity (0-100): How severe and urgent is the problem?
+           - Willingness to pay (0-100): How likely are users to pay for a solution?
+           - Competitive landscape (0-100): How crowded is the market? (Higher = less crowded, better opportunity)
+           - TAM (Total Addressable Market) (0-100): How large is the potential market?
         
-        Only generate ideas that score 60 or above in total.`,
+        The final score is the simple average of all four criteria (sum / 4).
+        Only generate ideas where the average score is 60 or above.`,
       },
       {
         role: "user",
@@ -122,16 +125,18 @@ export async function generateIdeaFromPost(params: {
           "title": "Product name",
           "pitch": "1-2 sentence description",
           "pain_insight": "Key pain point extracted",
-          "score": total_score_0_100,
+          "score": average_score_0_100 (average of all criteria),
           "scoring_breakdown": {
-            "pain_point_intensity": 0-25,
-            "willingness_to_pay": 0-25,
-            "competitive_landscape": 0-25,
-            "tam": 0-25
+            "pain_point_intensity": 0-100,
+            "willingness_to_pay": 0-100,
+            "competitive_landscape": 0-100,
+            "tam": 0-100
           }
         }
         
-        Only return the idea if the total score is 60 or above. If the score would be below 60, return null.`,
+        Each criterion should be scored independently from 0-100.
+        The score field should be the average of all four criteria.
+        Only return the idea if the average score is 60 or above. If the score would be below 60, return null.`,
       },
     ],
     response_format: { type: "json_object" },
@@ -145,8 +150,17 @@ export async function generateIdeaFromPost(params: {
 
   const parsed = JSON.parse(content);
   
-  // If score is below 60, return null (will be discarded)
-  if (parsed.score === null || parsed.score < 60) {
+  // Extract individual criterion scores (0-100 each)
+  const painIntensity = Math.round(parsed.scoring_breakdown?.pain_point_intensity || 0);
+  const willingnessToPay = Math.round(parsed.scoring_breakdown?.willingness_to_pay || 0);
+  const competitiveLandscape = Math.round(parsed.scoring_breakdown?.competitive_landscape || 0);
+  const tam = Math.round(parsed.scoring_breakdown?.tam || 0);
+  
+  // Calculate average score
+  const averageScore = Math.round((painIntensity + willingnessToPay + competitiveLandscape + tam) / 4);
+  
+  // If score is below 60, return empty (will be discarded)
+  if (parsed.score === null || averageScore < 60) {
     return {
       title: "",
       pitch: "",
@@ -165,12 +179,12 @@ export async function generateIdeaFromPost(params: {
     title: parsed.title,
     pitch: parsed.pitch,
     pain_insight: parsed.pain_insight,
-    score: Math.round(parsed.score),
+    score: averageScore,
     scoring_breakdown: {
-      pain_point_intensity: parsed.scoring_breakdown?.pain_point_intensity || 0,
-      willingness_to_pay: parsed.scoring_breakdown?.willingness_to_pay || 0,
-      competitive_landscape: parsed.scoring_breakdown?.competitive_landscape || 0,
-      tam: parsed.scoring_breakdown?.tam || 0,
+      pain_point_intensity: painIntensity,
+      willingness_to_pay: willingnessToPay,
+      competitive_landscape: competitiveLandscape,
+      tam: tam,
     },
   };
 }

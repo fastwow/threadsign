@@ -90,6 +90,11 @@ export async function GET(request: Request) {
               llm_prompt_version: "v1",
               llm_raw: {
                 scoring_breakdown: ideaResult.scoring_breakdown,
+                // Store individual criterion scores for breakdown display
+                pain_point_intensity: ideaResult.scoring_breakdown.pain_point_intensity,
+                willingness_to_pay: ideaResult.scoring_breakdown.willingness_to_pay,
+                competitive_landscape: ideaResult.scoring_breakdown.competitive_landscape,
+                tam: ideaResult.scoring_breakdown.tam,
               },
             })
             .select()
@@ -97,38 +102,47 @@ export async function GET(request: Request) {
 
           if (ideaError) {
             errors.push(`Failed to insert idea for post ${post.id}: ${ideaError.message}`);
-            continue;
-          }
-
-          // Link idea to source post
-          const { error: sourceError } = await supabase
-            .from("idea_sources")
-            .insert({
-              idea_id: newIdea.id,
-              reddit_post_id: post.id,
-            });
-
-          if (sourceError) {
-            errors.push(`Failed to link idea to post ${post.id}: ${sourceError.message}`);
+            // Still mark as processed to avoid blocking other posts
           } else {
-            ideasGenerated++;
+            // Link idea to source post
+            const { error: sourceError } = await supabase
+              .from("idea_sources")
+              .insert({
+                idea_id: newIdea.id,
+                reddit_post_id: post.id,
+              });
+
+            if (sourceError) {
+              errors.push(`Failed to link idea to post ${post.id}: ${sourceError.message}`);
+            } else {
+              ideasGenerated++;
+            }
           }
         }
 
-        // Mark post as processed (even if no idea was generated)
-        await supabase
+        // Mark post as processed regardless of evaluation score
+        // This ensures low-scoring posts don't block processing
+        const { error: updateError } = await supabase
           .from("reddit_posts")
           .update({ processed_at: new Date().toISOString() })
           .eq("id", post.id);
+
+        if (updateError) {
+          errors.push(`Failed to mark post ${post.id} as processed: ${updateError.message}`);
+        }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error";
         errors.push(`Error processing post ${post.id}: ${errorMessage}`);
         
         // Still mark as processed to avoid infinite retries on bad posts
-        await supabase
+        const { error: updateError } = await supabase
           .from("reddit_posts")
           .update({ processed_at: new Date().toISOString() })
           .eq("id", post.id);
+
+        if (updateError) {
+          errors.push(`Failed to mark post ${post.id} as processed after error: ${updateError.message}`);
+        }
       }
     }
 

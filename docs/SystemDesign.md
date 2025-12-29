@@ -16,11 +16,13 @@ including architecture and Supabase schema.
 - Email: Resend
 
 ### High-Level Flow
-1. Reddit ingestion job generates/fetches new posts (runs every 5 minutes)
-2. Raw posts are stored for traceability
+1. Reddit ingestion job generates new posts (runs every 5 minutes, generates at least 5 posts per run)
+2. Raw posts are stored as signal data only (no scoring or evaluation)
 3. LLM processes posts and generates ideas (runs every 12 minutes)
-4. Ideas are stored and surfaced via feed (only ideas with score ≥ 60)
-5. Email digests are generated for subscribers
+4. Ideas are scored on 4 criteria (0-100 each), final score is average
+5. Ideas are stored and surfaced via feed (only ideas with average score ≥ 60)
+6. All posts are marked as processed regardless of score (prevents blocking)
+7. Email digests are sent to subscribers (runs every 20 minutes) with new ideas matching their topics
 
 All ingestion, LLM processing, and email sending
 run server-side using Supabase service role keys.
@@ -91,12 +93,12 @@ Generated product ideas. Only ideas with score ≥ 60 are stored.
 | title | text |
 | pitch | text |
 | pain_insight | text |
-| score | int (CHECK score >= 60) |
+| score | int (CHECK score >= 60, average of 4 criteria 0-100) |
 | topic_id | uuid (FK) |
 | created_at | timestamptz |
 | llm_model | text |
 | llm_prompt_version | text |
-| llm_raw | jsonb |
+| llm_raw | jsonb (stores individual criterion scores: pain_point_intensity, willingness_to_pay, competitive_landscape, tam) |
 
 ---
 
@@ -151,13 +153,20 @@ Email delivery tracking (implementation detail for metrics).
 
 ### LLM Processing
 - `reddit_posts.processed_at` tracks when a post was last processed by LLM
-- `ideas.llm_raw` stores full LLM response for audit/debugging
-- Only ideas with score ≥ 60 are stored (lower scores discarded)
+- Reddit posts are raw signals only—no scoring or evaluation at ingestion stage
+- Each idea is scored on 4 criteria (each 0–100 independently): pain point intensity, willingness to pay, competitive landscape, TAM
+- Final score is simple average of all criteria
+- `ideas.llm_raw` stores individual criterion scores for breakdown display
+- Only ideas with average score ≥ 60 are stored (lower scores discarded)
+- **All posts are marked as processed regardless of score** - low-scoring posts don't block processing
 
 ### Email Delivery Tracking
 - `email_deliveries` table tracks when emails were sent to subscribers
 - Stores Resend message IDs for delivery status lookups (if needed)
 - Used for metrics (email open rate, delivery rate) - implementation detail only
+- **Email Delivery Schedule:** Runs every 20 minutes
+- **Duplicate Prevention:** Emails include only ideas that haven't been sent to that user before (tracked via `email_deliveries.ideas_included`)
+- Each delivery includes all new ideas matching the user's subscribed topics since their last email
 
 ## 4. Security & Access Notes
 

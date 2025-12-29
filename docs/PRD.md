@@ -69,23 +69,27 @@ ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked duri
 - **Implementation:** Currently uses mocked Reddit data generated via LLM-based mock generator
   - Reddit posts are generated using LLM rather than fetched from Reddit API
   - Mock generation is scoped to Developer Tools topic and /startups subreddit for MVP
-  - Generated posts are treated as internal signal data, not user-facing content
+  - Generated posts are treated as raw signal data only—no scoring, ranking, or evaluation at this stage
+  - Generated posts are internal signal data, not user-facing content
   - Mocked data is used temporarily during MVP development
   - Official Reddit API integration will replace mocks once API access is approved
   - This is an implementation detail only—no changes to product flow or features
 - Ingestion runs every 5 minutes on a scheduled basis
+- Generates at least 5 Reddit posts per run
 - Ingestion is asynchronous and scheduled
 
 ### Idea Generation & Scoring
 - Runs every 12 minutes to evaluate newly ingested discussion posts
 - Uses LLM to extract pain points and generate product ideas
 - Each idea receives a viability score from 0–100
-- **Scoring Criteria (each contributes 25% of total score):**
-  - Pain point intensity
-  - Willingness to pay
-  - Competitive landscape
-  - TAM (Total Addressable Market)
-- **Scoring Threshold:** Only ideas with a score ≥ 60 are stored and surfaced to users
+- **Scoring Criteria (each scored independently 0–100):**
+  - Pain point intensity (0–100)
+  - Willingness to pay (0–100)
+  - Competitive landscape (0–100)
+  - TAM - Total Addressable Market (0–100)
+- **Final Score Calculation:** Simple average of all four criteria (sum / 4)
+- **Scoring Threshold:** Only ideas with an average score ≥ 60 are stored and surfaced to users
+- Individual criterion scores are persisted for breakdown display
 - Lower-scoring ideas are discarded (implementation detail)
 - LLM prompts and outputs are structured and versioned
 
@@ -96,9 +100,13 @@ ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked duri
   - Short pitch (1–2 sentences)
   - Key pain / insight
   - Source subreddit + link
-  - Viability score
-  - “New” badge
+  - Viability score (with breakdown on hover)
+  - "New" badge
 - Topic-based filtering
+- Sorting controls:
+  - By date (newest first / oldest first)
+  - By score (highest first / lowest first)
+- Score breakdown tooltip shows individual criterion scores on hover
 - Graceful loading and empty states
 
 ### Authentication
@@ -107,7 +115,9 @@ ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked duri
 
 ### Email Subscriptions
 - Topic-based subscriptions
-- Emails sent via Resend
+- Emails sent via Resend every 20 minutes
+- Emails include only new ideas matching subscribed topics
+- Duplicate prevention: ideas are sent to each user only once
 - Unsubscribe available via link or profile
 
 ---
