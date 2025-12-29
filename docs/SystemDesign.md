@@ -16,10 +16,10 @@ including architecture and Supabase schema.
 - Email: Resend
 
 ### High-Level Flow
-1. Reddit ingestion job fetches new posts
+1. Reddit ingestion job generates/fetches new posts (runs every 5 minutes)
 2. Raw posts are stored for traceability
-3. LLM processes posts and generates ideas
-4. Ideas are stored and surfaced via feed
+3. LLM processes posts and generates ideas (runs every 12 minutes)
+4. Ideas are stored and surfaced via feed (only ideas with score ≥ 60)
 5. Email digests are generated for subscribers
 
 All ingestion, LLM processing, and email sending
@@ -64,7 +64,7 @@ Curated list of Reddit sources.
 ---
 
 ### `reddit_posts`
-Raw Reddit posts ingested via API.
+Raw Reddit posts ingested via API (or generated via LLM mock generator in MVP).
 
 | Column | Type |
 |------|------|
@@ -78,11 +78,12 @@ Raw Reddit posts ingested via API.
 | num_comments | int |
 | created_utc | timestamptz |
 | raw_json | jsonb |
+| processed_at | timestamptz |
 
 ---
 
 ### `ideas`
-Generated product ideas.
+Generated product ideas. Only ideas with score ≥ 60 are stored.
 
 | Column | Type |
 |------|------|
@@ -90,7 +91,7 @@ Generated product ideas.
 | title | text |
 | pitch | text |
 | pain_insight | text |
-| score | int |
+| score | int (CHECK score >= 60) |
 | topic_id | uuid (FK) |
 | created_at | timestamptz |
 | llm_model | text |
@@ -133,8 +134,34 @@ Topic filters per subscription.
 
 ---
 
-## 3. Security & Access Notes
+### `email_deliveries`
+Email delivery tracking (implementation detail for metrics).
+
+| Column | Type |
+|------|------|
+| id | uuid (PK) |
+| subscription_id | uuid (FK → email_subscriptions) |
+| sent_at | timestamptz |
+| ideas_included | jsonb (array of idea_ids) |
+| resend_message_id | text (from Resend API) |
+
+---
+
+## 3. Processing & Tracking Notes
+
+### LLM Processing
+- `reddit_posts.processed_at` tracks when a post was last processed by LLM
+- `ideas.llm_raw` stores full LLM response for audit/debugging
+- Only ideas with score ≥ 60 are stored (lower scores discarded)
+
+### Email Delivery Tracking
+- `email_deliveries` table tracks when emails were sent to subscribers
+- Stores Resend message IDs for delivery status lookups (if needed)
+- Used for metrics (email open rate, delivery rate) - implementation detail only
+
+## 4. Security & Access Notes
 
 - Public read access may be allowed for ideas/feed
 - Subscription data is protected via RLS
+- Email delivery tracking is protected via RLS (users can only see their own)
 - All background jobs use service role credentials
