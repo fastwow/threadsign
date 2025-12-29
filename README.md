@@ -1,6 +1,8 @@
 # ThreadSign
 Product ideas from real discussion threads
 
+> 🇺🇦 [Implementation Notes (Ukrainian)](./IMPLEMENTATION_NOTES_UKRAINIAN.md)
+
 [View the Deployed App &rarr;](https://threadsign.vercel.app/)
 
 ## Demo
