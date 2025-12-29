@@ -3,6 +3,23 @@ Product ideas from real discussion threads
 
 [View the Deployed App &rarr;](https://threadsign.vercel.app/)
 
+## Demo
+
+### Landing Page
+![Landing Page](./demo/landing_page.png)
+
+### Sign In
+![Sign In](./demo/sing_in.png)
+
+### Idea Feed with Score Breakdown
+![Score Breakdown](./demo/score_breakdown.png)
+
+### Email Subscription
+![Email Subscription](./demo/email_subscription.png)
+
+### Email Digest
+![Email Digest](./demo/received_email_digest.png)
+
 ## Product Requirements
 
 Detailed requirements, features, technical architecture, and product goals are documented in [@docs/PRD.md](./docs/PRD.md).  
