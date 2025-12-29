@@ -10,8 +10,10 @@ export async function HeroSection() {
   const isAuthenticated = !!user;
 
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-32">
-      <div className="flex flex-col items-center text-center gap-8">
+    <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-32 relative">
+      {/* Subtle premium gradient background for hero area - purple → violet → magenta */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-purple-950/15 via-violet-950/10 via-fuchsia-950/8 to-transparent rounded-3xl" />
+      <div className="flex flex-col items-center text-center gap-8 relative">
         <Badge variant="secondary" className="mb-2">
           Product ideas from real discussion threads
         </Badge>

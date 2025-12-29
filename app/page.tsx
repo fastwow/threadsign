@@ -4,7 +4,7 @@ import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
 import { Suspense } from "react";
 import Image from "next/image";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { EnvVarWarning } from "@/components/env-var-warning";
 import { Accordion } from "@/components/ui/accordion";
 import { PricingSection } from "@/components/pricing-section";
@@ -26,7 +26,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen flex flex-col bg-gradient-to-b from-background via-background to-muted/20">
+    <main className="min-h-screen flex flex-col bg-[radial-gradient(80%_50%_at_50%_0%,rgba(168,85,247,0.25),transparent_70%)] bg-background">
       {/* Navigation */}
       <nav className="w-full border-b border-border">
         <div className="w-full max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 h-16">
@@ -52,8 +52,9 @@ export default function Home() {
 
       {/* Hero Section */}
       <Suspense fallback={
-        <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-32">
-          <div className="flex flex-col items-center text-center gap-8">
+        <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-32 relative">
+          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-purple-950/15 via-violet-950/10 via-fuchsia-950/8 to-transparent rounded-3xl" />
+          <div className="flex flex-col items-center text-center gap-8 relative">
             <div className="h-8 w-48 bg-muted animate-pulse rounded" />
             <div className="h-16 w-full max-w-3xl bg-muted animate-pulse rounded" />
             <div className="h-6 w-full max-w-2xl bg-muted animate-pulse rounded" />
@@ -238,7 +239,7 @@ export default function Home() {
 
       {/* Pricing Section */}
       <Suspense fallback={
-        <section className="w-full border-t border-border bg-card/50 py-20 sm:py-24">
+        <section className="w-full border-t border-border bg-card/50 py-20 sm:py-24" >
           <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <div className="h-10 w-32 bg-muted animate-pulse rounded mx-auto mb-4" />
@@ -255,7 +256,7 @@ export default function Home() {
       </Suspense>
 
       {/* Footer */}
-      <footer className="w-full border-t border-border mt-auto py-12">
+      <footer className="w-full border-t border-border mt-auto py-12">  
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-3">

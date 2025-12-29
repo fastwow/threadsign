@@ -1,5 +1,4 @@
 import { AuthButton } from "@/components/auth-button";
-import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -12,7 +11,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="min-h-screen flex flex-col">
+    <main className="min-h-screen flex flex-col bg-[radial-gradient(80%_80%_at_50%50%,rgba(168,85,247,0.25),transparent_70%)] bg-background">
       <nav className="w-full border-b border-border">
         <div className="w-full max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 h-16">
           <Link href="/" className="flex items-center gap-3 font-semibold">
