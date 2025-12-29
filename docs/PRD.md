@@ -10,7 +10,9 @@
 Early-stage founders struggle to identify **real, validated problems** worth solving. While Reddit contains millions of candid discussions describing user frustrations, this information is noisy, fragmented, and difficult to convert into actionable product ideas.
 
 ### High-Level Solution
-ThreadSign is a SaaS that uses the **official Reddit API as its primary data source** to monitor selected, problem-heavy subreddits. The system periodically ingests discussion threads, extracts pain signals, and uses an LLM to generate **concise product ideas with a simplified viability score**. Users consume these ideas via a web feed and optional email updates.
+ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked during MVP development) to monitor selected, problem-heavy subreddits. The system periodically ingests discussion threads, extracts pain signals, and uses an LLM to generate **concise product ideas with a simplified viability score**. Users consume these ideas via a web feed and optional email updates.
+
+> **Implementation Note:** During MVP development, mocked Reddit data is used temporarily. Access to the official Reddit API requires submitting and waiting for approval of an application form. This is an implementation detail only—the product flow, features, and UX are designed to work identically with real Reddit API data once approved. Mocked data does not represent a product limitation.
 
 ### Target Users
 - Beginner founders
@@ -64,9 +66,12 @@ ThreadSign is a SaaS that uses the **official Reddit API as its primary data sou
 ## 4. Functional Requirements
 
 ### Reddit Data Ingestion
-- Official Reddit API is the primary data source
+- **Implementation:** Currently uses mocked Reddit data that simulates real Reddit discussion threads
+  - Mocked data is used temporarily during MVP development
+  - Official Reddit API integration will replace mocks once API access is approved
+  - This is an implementation detail only—no changes to product flow or features
 - Subreddits are manually curated for MVP
-- Only recent posts are fetched (e.g., new / hot)
+- Only recent posts are simulated/fetched (e.g., new / hot)
 - Basic quality filters are applied (e.g., upvotes)
 - Ingestion is asynchronous and scheduled
 
@@ -110,7 +115,7 @@ ThreadSign is a SaaS that uses the **official Reddit API as its primary data sou
 - Authentication handled by Supabase
 
 ### Scalability
-- Batch ingestion to respect Reddit API limits
+- Batch ingestion to respect Reddit API limits (when API access is available)
 - Caching of ingested posts and generated ideas
 - MVP assumes low-to-moderate traffic
 
@@ -145,7 +150,7 @@ ThreadSign is a SaaS that uses the **official Reddit API as its primary data sou
 ## 8. Open Questions & Assumptions
 
 ### Assumptions
-- Reddit API access is stable
+- Reddit API access will be available after approval (currently using mocked data for development)
 - Subreddit list is manually curated
 - Viability scoring is heuristic
 

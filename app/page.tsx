@@ -69,7 +69,7 @@ export default function Home() {
               <Link href="/auth/sign-up">Get Started</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link href="/protected">Browse Ideas</Link>
+              <Link href="/dashboard">Browse Ideas</Link>
             </Button>
           </div>
         </div>
