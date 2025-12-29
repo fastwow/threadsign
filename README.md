@@ -5,6 +5,14 @@ Product ideas from real discussion threads
 
 ## Demo
 
+### Video Walkthrough
+
+[![ThreadSign Demo Video](https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg)](https://www.loom.com/share/your-demo-video-link-here)
+  
+*Click the thumbnail above to watch a quick video demo on Loom*
+
+---
+
 ### Landing Page
 ![Landing Page](./demo/landing_page.png)
 
