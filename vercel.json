@@ -1,0 +1,13 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/generate-reddit-posts",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/generate-ideas",
+      "schedule": "*/12 * * * *"
+    }
+  ]
+}
+
