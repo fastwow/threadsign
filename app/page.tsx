@@ -4,11 +4,11 @@ import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
 import { Suspense } from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { EnvVarWarning } from "@/components/env-var-warning";
 import { Accordion } from "@/components/ui/accordion";
+import { PricingSection } from "@/components/pricing-section";
+import { HeroSection } from "@/components/hero-section";
 import logo from "@/app/logo.png";
 
 export default function Home() {
@@ -51,29 +51,21 @@ export default function Home() {
         </nav>
 
       {/* Hero Section */}
-      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-32">
-        <div className="flex flex-col items-center text-center gap-8">
-          <Badge variant="secondary" className="mb-2">
-            Product ideas from real discussion threads
-          </Badge>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight max-w-3xl">
-            Find validated problems worth solving
-          </h1>
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl">
-            ThreadSign monitors Reddit discussions to extract pain signals and generates
-            concise product ideas with viability scores. Built for founders who want
-            real, validated problems, not noise.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 mt-4">
-            <Button asChild size="lg">
-              <Link href="/auth/sign-up">Get Started</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link href="/dashboard">Browse Ideas</Link>
-            </Button>
+      <Suspense fallback={
+        <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-32">
+          <div className="flex flex-col items-center text-center gap-8">
+            <div className="h-8 w-48 bg-muted animate-pulse rounded" />
+            <div className="h-16 w-full max-w-3xl bg-muted animate-pulse rounded" />
+            <div className="h-6 w-full max-w-2xl bg-muted animate-pulse rounded" />
+            <div className="flex gap-4">
+              <div className="h-12 w-32 bg-muted animate-pulse rounded" />
+              <div className="h-12 w-32 bg-muted animate-pulse rounded" />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      }>
+        <HeroSection />
+      </Suspense>
 
       {/* Features Section */}
       <section className="w-full border-t border-border bg-card/50 py-20 sm:py-24">
@@ -245,80 +237,22 @@ export default function Home() {
       </section>
 
       {/* Pricing Section */}
-      <section className="w-full border-t border-border bg-card/50 py-20 sm:py-24">
-        <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Pricing</h2>
-            <p className="text-muted-foreground text-lg">
-              Choose the plan that works for you
-            </p>
+      <Suspense fallback={
+        <section className="w-full border-t border-border bg-card/50 py-20 sm:py-24">
+          <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <div className="h-10 w-32 bg-muted animate-pulse rounded mx-auto mb-4" />
+              <div className="h-6 w-64 bg-muted animate-pulse rounded mx-auto" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+              <div className="h-96 bg-muted animate-pulse rounded-xl" />
+              <div className="h-96 bg-muted animate-pulse rounded-xl" />
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-2xl">Free</CardTitle>
-                <CardDescription className="text-base mt-2">
-                  Get started with ThreadSign
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="text-3xl font-bold">$0</div>
-                  <div className="text-muted-foreground">per month</div>
-                </div>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2">
-                    <span className="text-primary">✓</span>
-                    <span>Up to 10 pitches per month</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-primary">✓</span>
-                    <span>Access to idea feed</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-primary">✓</span>
-                    <span>Topic-based filtering</span>
-                  </li>
-                </ul>
-                <Button asChild className="w-full" size="lg">
-                  <Link href="/auth/sign-up">Get Started</Link>
-                </Button>
-              </CardContent>
-            </Card>
-            <Card className="border-primary/50">
-              <CardHeader>
-                <CardTitle className="text-2xl">Custom</CardTitle>
-                <CardDescription className="text-base mt-2">
-                  For teams and power users
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="text-3xl font-bold">Custom</div>
-                  <div className="text-muted-foreground">Contact us for pricing</div>
-                </div>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2">
-                    <span className="text-primary">✓</span>
-                    <span>Unlimited pitches</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-primary">✓</span>
-                    <span>All free features</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-primary">✓</span>
-                    <span>Priority support</span>
-                  </li>
-                </ul>
-                <Button asChild className="w-full" size="lg" variant="outline">
-                  <a href="mailto:contact@threadsign.com">Contact Us</a>
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
+        </section>
+      }>
+        <PricingSection />
+      </Suspense>
 
       {/* Footer */}
       <footer className="w-full border-t border-border mt-auto py-12">
