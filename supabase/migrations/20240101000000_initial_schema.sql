@@ -40,16 +40,18 @@ CREATE TABLE IF NOT EXISTS reddit_posts (
   num_comments INTEGER NOT NULL DEFAULT 0,
   created_utc TIMESTAMPTZ NOT NULL,
   raw_json JSONB,
+  processed_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- Ideas table
+-- Only ideas with score >= 60 are stored (lower scores discarded)
 CREATE TABLE IF NOT EXISTS ideas (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   title TEXT NOT NULL,
   pitch TEXT NOT NULL,
   pain_insight TEXT NOT NULL,
-  score INTEGER NOT NULL CHECK (score >= 0 AND score <= 100),
+  score INTEGER NOT NULL CHECK (score >= 60 AND score <= 100),
   topic_id UUID NOT NULL REFERENCES topics(id) ON DELETE RESTRICT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   llm_model TEXT,
@@ -85,9 +87,20 @@ CREATE TABLE IF NOT EXISTS email_subscription_topics (
   UNIQUE(subscription_id, topic_id)
 );
 
+-- Email deliveries table (for tracking email sends to subscribers)
+CREATE TABLE IF NOT EXISTS email_deliveries (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  subscription_id UUID NOT NULL REFERENCES email_subscriptions(id) ON DELETE CASCADE,
+  sent_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  ideas_included JSONB NOT NULL DEFAULT '[]'::jsonb,
+  resend_message_id TEXT
+);
+
 -- Create indexes for performance
 CREATE INDEX IF NOT EXISTS idx_reddit_posts_subreddit_id ON reddit_posts(subreddit_id);
 CREATE INDEX IF NOT EXISTS idx_reddit_posts_created_utc ON reddit_posts(created_utc DESC);
+CREATE INDEX IF NOT EXISTS idx_reddit_posts_processed_at ON reddit_posts(processed_at)
+WHERE processed_at IS NULL;
 CREATE INDEX IF NOT EXISTS idx_ideas_topic_id ON ideas(topic_id);
 CREATE INDEX IF NOT EXISTS idx_ideas_created_at ON ideas(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_ideas_score ON ideas(score DESC);
@@ -96,6 +109,8 @@ CREATE INDEX IF NOT EXISTS idx_idea_sources_reddit_post_id ON idea_sources(reddi
 CREATE INDEX IF NOT EXISTS idx_email_subscriptions_user_id ON email_subscriptions(user_id);
 CREATE INDEX IF NOT EXISTS idx_email_subscription_topics_subscription_id ON email_subscription_topics(subscription_id);
 CREATE INDEX IF NOT EXISTS idx_email_subscription_topics_topic_id ON email_subscription_topics(topic_id);
+CREATE INDEX IF NOT EXISTS idx_email_deliveries_subscription_id ON email_deliveries(subscription_id);
+CREATE INDEX IF NOT EXISTS idx_email_deliveries_sent_at ON email_deliveries(sent_at DESC);
 
 -- Enable Row Level Security
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
@@ -106,6 +121,7 @@ ALTER TABLE ideas ENABLE ROW LEVEL SECURITY;
 ALTER TABLE idea_sources ENABLE ROW LEVEL SECURITY;
 ALTER TABLE email_subscriptions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE email_subscription_topics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE email_deliveries ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
 
@@ -161,6 +177,16 @@ CREATE POLICY "Users can manage own subscription topics" ON email_subscription_t
     EXISTS (
       SELECT 1 FROM email_subscriptions
       WHERE email_subscriptions.id = email_subscription_topics.subscription_id
+      AND email_subscriptions.user_id = auth.uid()
+    )
+  );
+
+-- Email deliveries: Users can view their own email deliveries
+CREATE POLICY "Users can view own email deliveries" ON email_deliveries
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM email_subscriptions
+      WHERE email_subscriptions.id = email_deliveries.subscription_id
       AND email_subscriptions.user_id = auth.uid()
     )
   );
