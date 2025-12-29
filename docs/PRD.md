@@ -12,7 +12,7 @@ Early-stage founders struggle to identify **real, validated problems** worth sol
 ### High-Level Solution
 ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked during MVP development) to monitor selected, problem-heavy subreddits. The system periodically ingests discussion threads, extracts pain signals, and uses an LLM to generate **concise product ideas with a simplified viability score**. Users consume these ideas via a web feed and optional email updates.
 
-> **Implementation Note:** During MVP development, mocked Reddit data is used temporarily. Access to the official Reddit API requires submitting and waiting for approval of an application form. This is an implementation detail only—the product flow, features, and UX are designed to work identically with real Reddit API data once approved. Mocked data does not represent a product limitation.
+> **Implementation Note:** During MVP development, Reddit posts are generated using an LLM-based mock generator rather than fetched from the Reddit API. The current mock implementation is scoped to Developer Tools topic and /startups subreddit. Access to the official Reddit API requires submitting and waiting for approval of an application form. This is an implementation detail only—the product flow, features, and UX are designed to work identically with real Reddit API data once approved. Mocked data does not represent a product limitation.
 
 ### Target Users
 - Beginner founders
@@ -66,18 +66,27 @@ ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked duri
 ## 4. Functional Requirements
 
 ### Reddit Data Ingestion
-- **Implementation:** Currently uses mocked Reddit data that simulates real Reddit discussion threads
+- **Implementation:** Currently uses mocked Reddit data generated via LLM-based mock generator
+  - Reddit posts are generated using LLM rather than fetched from Reddit API
+  - Mock generation is scoped to Developer Tools topic and /startups subreddit for MVP
+  - Generated posts are treated as internal signal data, not user-facing content
   - Mocked data is used temporarily during MVP development
   - Official Reddit API integration will replace mocks once API access is approved
   - This is an implementation detail only—no changes to product flow or features
-- Subreddits are manually curated for MVP
-- Only recent posts are simulated/fetched (e.g., new / hot)
-- Basic quality filters are applied (e.g., upvotes)
+- Ingestion runs every 5 minutes on a scheduled basis
 - Ingestion is asynchronous and scheduled
 
 ### Idea Generation & Scoring
-- OpenAI is used to extract pain points and generate ideas
-- Each idea includes a simplified viability score (0–100)
+- Runs every 12 minutes to evaluate newly ingested discussion posts
+- Uses LLM to extract pain points and generate product ideas
+- Each idea receives a viability score from 0–100
+- **Scoring Criteria (each contributes 25% of total score):**
+  - Pain point intensity
+  - Willingness to pay
+  - Competitive landscape
+  - TAM (Total Addressable Market)
+- **Scoring Threshold:** Only ideas with a score ≥ 60 are stored and surfaced to users
+- Lower-scoring ideas are discarded (implementation detail)
 - LLM prompts and outputs are structured and versioned
 
 ### Idea Feed
@@ -115,9 +124,10 @@ ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked duri
 - Authentication handled by Supabase
 
 ### Scalability
-- Batch ingestion to respect Reddit API limits (when API access is available)
+- Scheduled ingestion runs every 5 minutes
 - Caching of ingested posts and generated ideas
 - MVP assumes low-to-moderate traffic
+- Batch ingestion to respect Reddit API limits (when API access is available)
 
 ---
 
@@ -150,12 +160,13 @@ ThreadSign is a SaaS that uses **Reddit discussion data** (currently mocked duri
 ## 8. Open Questions & Assumptions
 
 ### Assumptions
+- Reddit posts are generated via LLM-based mock generator during MVP development
+- Mock implementation is scoped to Developer Tools topic and /startups subreddit
 - Reddit API access will be available after approval (currently using mocked data for development)
-- Subreddit list is manually curated
-- Viability scoring is heuristic
+- Viability scoring uses structured LLM evaluation with defined criteria
 
 ### Open Questions
-- Ingestion frequency (daily vs more often)
+- Expanding beyond Developer Tools topic and /startups subreddit
 - Reprocessing older posts
 - Anonymous browsing vs auth-only
 
