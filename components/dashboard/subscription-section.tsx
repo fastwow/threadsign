@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Mail, CheckCircle2 } from "lucide-react";
+import { updateSubscription, unsubscribe as unsubscribeAction } from "@/app/actions/subscriptions";
 
 interface Topic {
   id: string;
@@ -30,12 +31,56 @@ export function SubscriptionSection({ userId }: { userId: string }) {
     null
   );
 
+  const loadSubscriptionData = async () => {
+    const supabase = createClient();
+
+    try {
+      // Load user's subscription
+      const { data: subData, error: subError } = await supabase
+        .from("email_subscriptions")
+        .select(
+          `
+          id,
+          is_active,
+          email_subscription_topics(
+            topic:topics(id, key, label)
+          )
+        `
+        )
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (subError) throw subError;
+
+      if (subData) {
+        setSubscription({
+          id: subData.id,
+          is_active: subData.is_active,
+          topics: (subData.email_subscription_topics as any[]).map(
+            (est: any) => est.topic
+          ),
+        });
+        setSelectedTopics(
+          new Set(
+            (subData.email_subscription_topics as any[]).map((est: any) => est.topic.id)
+          )
+        );
+      } else {
+        setSubscription(null);
+        setSelectedTopics(new Set());
+      }
+    } catch (err) {
+      console.error("Failed to load subscription:", err);
+      throw err;
+    }
+  };
+
   useEffect(() => {
     async function loadData() {
-      const supabase = createClient();
       setLoading(true);
 
       try {
+        const supabase = createClient();
         // Load topics
         const { data: topicsData, error: topicsError } = await supabase
           .from("topics")
@@ -46,36 +91,7 @@ export function SubscriptionSection({ userId }: { userId: string }) {
         setTopics(topicsData || []);
 
         // Load user's subscription
-        const { data: subData, error: subError } = await supabase
-          .from("email_subscriptions")
-          .select(
-            `
-            id,
-            is_active,
-            email_subscription_topics(
-              topic:topics(id, key, label)
-            )
-          `
-          )
-          .eq("user_id", userId)
-          .maybeSingle();
-
-        if (subError) throw subError;
-
-        if (subData) {
-          setSubscription({
-            id: subData.id,
-            is_active: subData.is_active,
-            topics: (subData.email_subscription_topics as any[]).map(
-              (est: any) => est.topic
-            ),
-          });
-          setSelectedTopics(
-            new Set(
-              (subData.email_subscription_topics as any[]).map((est: any) => est.topic.id)
-            )
-          );
-        }
+        await loadSubscriptionData();
       } catch (err) {
         setMessage({
           type: "error",
@@ -100,71 +116,31 @@ export function SubscriptionSection({ userId }: { userId: string }) {
   };
 
   const handleSave = async () => {
-    const supabase = createClient();
     setSaving(true);
     setMessage(null);
 
     try {
-      let subscriptionId = subscription?.id;
+      const topicIds = Array.from(selectedTopics);
+      const result = await updateSubscription(topicIds);
 
-      // Create or update subscription
-      if (!subscriptionId) {
-        const { data: newSub, error: createError } = await supabase
-          .from("email_subscriptions")
-          .insert({
-            user_id: userId,
-            is_active: selectedTopics.size > 0,
-          })
-          .select()
-          .single();
-
-        if (createError) throw createError;
-        subscriptionId = newSub.id;
-      } else {
-        const { error: updateError } = await supabase
-          .from("email_subscriptions")
-          .update({
-            is_active: selectedTopics.size > 0,
-          })
-          .eq("id", subscriptionId);
-
-        if (updateError) throw updateError;
-
-        // Remove all existing topic associations
-        const { error: deleteError } = await supabase
-          .from("email_subscription_topics")
-          .delete()
-          .eq("subscription_id", subscriptionId);
-
-        if (deleteError) throw deleteError;
-      }
-
-      // Add selected topics
-      if (selectedTopics.size > 0) {
-        const topicInserts = Array.from(selectedTopics).map((topicId) => ({
-          subscription_id: subscriptionId,
-          topic_id: topicId,
-        }));
-
-        const { error: insertError } = await supabase
-          .from("email_subscription_topics")
-          .insert(topicInserts);
-
-        if (insertError) throw insertError;
+      if (!result.success) {
+        setMessage({
+          type: "error",
+          text: result.error || "Failed to update subscription",
+        });
+        return;
       }
 
       setMessage({
         type: "success",
         text:
-          selectedTopics.size > 0
+          topicIds.length > 0
             ? "Email subscription updated successfully"
             : "Email subscription disabled",
       });
 
       // Reload subscription data
-      if (subscriptionId) {
-        await reloadSubscription(subscriptionId);
-      }
+      await loadSubscriptionData();
     } catch (err) {
       setMessage({
         type: "error",
@@ -178,28 +154,19 @@ export function SubscriptionSection({ userId }: { userId: string }) {
   const handleUnsubscribe = async () => {
     if (!subscription?.id) return;
 
-    const supabase = createClient();
     setSaving(true);
     setMessage(null);
 
     try {
-      // Deactivate subscription
-      const { error: updateError } = await supabase
-        .from("email_subscriptions")
-        .update({
-          is_active: false,
-        })
-        .eq("id", subscription.id);
+      const result = await unsubscribeAction();
 
-      if (updateError) throw updateError;
-
-      // Remove all topic associations
-      const { error: deleteError } = await supabase
-        .from("email_subscription_topics")
-        .delete()
-        .eq("subscription_id", subscription.id);
-
-      if (deleteError) throw deleteError;
+      if (!result.success) {
+        setMessage({
+          type: "error",
+          text: result.error || "Failed to unsubscribe",
+        });
+        return;
+      }
 
       // Clear selected topics
       setSelectedTopics(new Set());
@@ -210,7 +177,7 @@ export function SubscriptionSection({ userId }: { userId: string }) {
       });
 
       // Reload subscription data
-      await reloadSubscription(subscription.id);
+      await loadSubscriptionData();
     } catch (err) {
       setMessage({
         type: "error",
@@ -221,38 +188,6 @@ export function SubscriptionSection({ userId }: { userId: string }) {
     }
   };
 
-  const reloadSubscription = async (subscriptionId: string) => {
-    const supabase = createClient();
-    const { data: subData, error: reloadError } = await supabase
-      .from("email_subscriptions")
-      .select(
-        `
-        id,
-        is_active,
-        email_subscription_topics(
-          topic:topics(id, key, label)
-        )
-      `
-      )
-      .eq("id", subscriptionId)
-      .single();
-
-    if (!reloadError && subData) {
-      setSubscription({
-        id: subData.id,
-        is_active: subData.is_active,
-        topics: (subData.email_subscription_topics as any[]).map(
-          (est: any) => est.topic
-        ),
-      });
-      // Update selected topics to match subscription
-      setSelectedTopics(
-        new Set(
-          (subData.email_subscription_topics as any[]).map((est: any) => est.topic.id)
-        )
-      );
-    }
-  };
 
   if (loading) {
     return (
