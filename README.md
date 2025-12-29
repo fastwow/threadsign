@@ -1,6 +1,12 @@
 # ThreadSign
 Product ideas from real discussion threads
 
+## Product Requirements
+
+Detailed requirements, features, technical architecture, and product goals are documented in [@docs/PRD.md](./docs/PRD.md).  
+This is the **source of truth** for the ThreadSign MVP.  
+Please refer to it for all product and implementation details.
+
 ## Setup Instructions
 
 ### Local Development
